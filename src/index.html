@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>GPU Finder</title>
+
+    <script>
+      const ipcRenderer = require('electron').ipcRenderer;
+      let jQuery, $ = require('jquery');
+      const bootstrap = require('bootstrap')
+      const moment = require('moment');
+      const puppeteer = require('puppeteer');
+      const scraperjs = require('scraperjs');
+    </script>
+
+    <script defer src="..\node_modules\@fortawesome\fontawesome-free\js\brands.js"></script>
+    <script defer src="..\node_modules\@fortawesome\fontawesome-free\js\solid.js"></script>
+    <script defer src="..\node_modules\@fortawesome\fontawesome-free\js\fontawesome.js"></script>
+
+    <link href="../node_modules/@fortawesome/fontawesome-free/css/fontawesome.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/topnav.css">
+    <link rel="stylesheet" href="css/master.css">
+
+  </head>
+  <body>
+
+    <!-- New source modal -->
+    <div class="modal fade" id="newLinkModal" tabindex="-1" aria-labelledby="newLinkModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newLinkModalLabel">New GPU Source</h5>
+          </div>
+          <div class="modal-body">
+            <input id="modalSourceSource" type="text" class="form-control" placeholder="Source" aria-label="Source">
+            <div class="input-group mb-3">
+              <span class="input-group-text">$</span>
+              <input type="text" class="form-control" placeholder="Current price">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button id="modalSourceSave" type="button" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="logo">
+      <img src="gpuFinder.png" alt="Flame Logo" height="45">
+    </div>
+
+    <nav class="topnav dragable navbar navbar-expand navbar-dark bg-dark">
+      <div class="dragnull navbar-brand">&emsp;&emsp;&emsp;GPU Finder</div>
+      <div class="collapse navbar-collapse" id="topNavbar">
+        <ul class="dragnull navbar-nav mr-auto">
+          <!-- <li class="nav-item active">
+            <a class="nav-link" href="#">Home</a>
+          </li> -->
+        </ul>
+        <div class="dragnull window-controls-container">
+          <button class="window-controls btn" type="button" onclick="minimizeWindow()"><i class="fas fa-window-minimize"></i></button>
+          <button class="window-controls btn" type="button" onclick="maximizeWindow()"><i class="fas fa-window-maximize"></i></button>
+          <button class="window-controls btn" type="button" onclick="closeWindow()"><i class="fas fa-times"></i></button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="content-area">
+
+      <div id="page-gpulist" class="page card-deck px-0">
+
+        <div class="card h-100 mx-3" style="min-width: 675px;">
+          <div class="card-body py-2 table-container h-100">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newLinkModal"><i class="fas fa-plus"></i></button>
+            <div id="productContainer"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/linkManager.js"></script>
+
+  </body>
+</html>

@@ -1,0 +1,27 @@
+.topnav {
+  z-index: 5;
+}
+
+.dragable {
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+.dragnull, .dragnull * {
+  -webkit-app-region: no-drag;
+}
+
+.window-controls-container {
+  position: absolute;
+  top: 0;
+  right: 10px;
+}
+
+.window-controls {
+  width: 50px;
+}
+
+.window-controls:hover {
+  background-color: #212121;
+  opacity: .6;
+}
