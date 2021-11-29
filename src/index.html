@@ -28,18 +28,14 @@
   <body>
 
     <!-- New source modal -->
-    <div class="modal fade" id="newLinkModal" tabindex="-1" aria-labelledby="newLinkModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade" id="newSourceModal" tabindex="-1" aria-labelledby="newLinkModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="newLinkModalLabel">New GPU Source</h5>
+            <h5 class="modal-title" id="newLinkModalLabel">New Source</h5>
           </div>
           <div class="modal-body">
             <input id="modalSourceSource" type="text" class="form-control" placeholder="Source" aria-label="Source">
-            <div class="input-group mb-3">
-              <span class="input-group-text">$</span>
-              <input type="text" class="form-control" placeholder="Current price">
-            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -75,7 +71,7 @@
 
         <div class="card h-100 mx-3" style="min-width: 675px;">
           <div class="card-body py-2 table-container h-100">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newLinkModal"><i class="fas fa-plus"></i></button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newSourceModal"><i class="fas fa-plus"></i></button>
             <div id="productContainer"></div>
           </div>
         </div>

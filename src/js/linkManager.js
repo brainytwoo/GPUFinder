@@ -1,7 +1,13 @@
 
+var newSourceModal = document.getElementById('newSourceModal')
+//var myInput = document.getElementById('myInput')
+
+newSourceModal.addEventListener('shown.bs.modal', function () {
+  ipcRenderer.invoke('loadURL', 'https://www.newegg.com/msi-geforce-rtx-3060-ti-rtx-3060-ti-gaming-x-8g-lhr/p/N82E16814137672?Description=3060&cm_re=3060-_-14-137-672-_-Product&quicklink=true');
+});
 
 $("#modalSourceSave").click(function() {
-  scrapeProduct($("#modalSourceSource").val());
+  //scrapeProduct($("#modalSourceSource").val());
 });
 
 async function scrapeProduct(url) {

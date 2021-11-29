@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserView, BrowserWindow } = require('electron');
 const ipcMain = require('electron').ipcMain;
 const windowStateKeeper = require('electron-window-state');
 const path = require('path');
@@ -12,23 +12,23 @@ process.env.NODE_ENV = 'development';
 
 let mainWindow = null;
 
-function createWindow() {
+function createWindow(source) {
 
   // Load the previous state with fallback to defaults
-  let mainWindowState = windowStateKeeper({
+  let windowState = windowStateKeeper({
     defaultWidth: 1366,
     defaultHeight: 768,
   });
 
   // Create the browser window.
-  mainWindow = new BrowserWindow({
+  let newWindow = new BrowserWindow({
     // icon: 'src/icons/icon.ico',
     show: false,
     frame: false,
-    x: mainWindowState.x,
-    y: mainWindowState.y,
-    width: mainWindowState.width,
-    height: mainWindowState.height,
+    x: windowState.x,
+    y: windowState.y,
+    width: windowState.width,
+    height: windowState.height,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -36,21 +36,25 @@ function createWindow() {
     },
   });
 
-  mainWindowState.manage(mainWindow);
+  windowState.manage(newWindow);
 
-  mainWindow.loadURL(`file://${__dirname}/src/index.html`);
+  newWindow.loadURL(source);
 
   if (process.env.NODE_ENV == 'development')
-    mainWindow.webContents.openDevTools();
+    newWindow.webContents.openDevTools();
 
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show();
+  newWindow.once('ready-to-show', () => {
+    newWindow.show();
   });
+
+  return newWindow;
 }
 
 app.userAgentFallback = app.userAgentFallback.replace('Electron/' + process.versions.electron, '');
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  mainWindow = createWindow(`file://${__dirname}/src/index.html`);
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -60,7 +64,7 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    mainWindow = createWindow(`file://${__dirname}/src/index.html`);
   }
 });
 
@@ -81,3 +85,21 @@ ipcMain.handle('windowAction', (event, action) => {
     }
   }
 })
+
+ipcMain.on('xpath', function (event, xpath) {
+  console.log(xpath);
+});
+
+ipcMain.handle('loadURL', (event, source) => {
+  if (mainWindow) {
+    const view = new BrowserView({
+      webPreferences: {
+        preload: path.join(__dirname, 'src/js/preload.js')
+      }
+    });
+    mainWindow.setBrowserView(view)
+    view.setBounds({ x: 200, y: 100, width: 992, height: 992 })
+    view.webContents.loadURL(source)
+    view.webContents.openDevTools();
+  }
+});
