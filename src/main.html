@@ -17,13 +17,13 @@
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
     crossorigin="anonymous"></script>
 
+    <script src="https://unpkg.com/rangeable@latest/dist/rangeable.min.js"></script>
+    <link rel="stylesheet" href="modules/rangeable/rangeable.css">
+
     <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/master.scss">
     <link rel="stylesheet" href="css/animate.css">
     <link rel="stylesheet" href="fonts/arvo/stylesheet.css">
-
-    <style>
-
-    </style>
 
 </head>
 <body>
@@ -107,14 +107,74 @@
 
             <!-- Left side -->
             <div class="col-3 px-4" style="padding-top: 64px;">
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-secondary dropdown-toggle mt-2 w-100" type="button" id="filterProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-offset="0,10">
+                        Filter Profile
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark w-100" aria-labelledby="filterProfileDropdown">
+                        <li><a class="dropdown-item" href="#">2060 - Example</a></li>
+                        <li><a class="dropdown-item" href="#">3060 - Example</a></li>
+                        <button class="btn rounded-circle btn-primary position-absolute top-100 start-100 translate-middle"><i class="fas fa-plus"></i></button>
+                    </ul>
+                </div>
+                
+                <div class="position-relative" style="margin-top: 45px; margin-bottom: 14px;">
+                    <div class="number position-absolute end-0" id="pricefilterMin"></div>
+                    <h6 class="position-absolute top-20 start-50 translate-middle">Price</h6>
+                    <div class="number my-2" id="pricefilterMax"></div>
+                    <div class="range">
+                        <input type="range" id="pricefilter">
+                    </div>
+                    <button class="btn btn-xsm btn-secondary position-absolute top-130 end-0">apply</button>
+                </div>
+                
+                <div class="position-relative btn-group-vertical w-100" style="margin-top: 45px;">
+                    <h6 class="position-absolute top-20 start-50 translate-middle">Brand</h6>
+                    <div class="form-check" style="margin-top: 35px;">
+                        <input class="form-check-input" type="checkbox" value="" checked>
+                        <label class="form-check-label">All</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" checked>
+                        <label class="form-check-label">Asus</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" checked>
+                        <label class="form-check-label">EVGA</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" checked>
+                        <label class="form-check-label">MSI</label>
+                    </div>
+                    <button class="btn btn-xsm btn-secondary position-absolute top-110 end-0" style="width: fit-content;">apply</button>
+                </div>
+
+                <div class="position-relative btn-group-vertical w-100" style="margin-top: 45px;">
+                    <h6 class="position-absolute top-20 start-50 translate-middle">Chipset</h6>
+                    <div class="form-check" style="margin-top: 35px;">
+                        <input class="form-check-input" type="checkbox" value="" checked>
+                        <label class="form-check-label">All</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" checked>
+                        <label class="form-check-label">GeForce RTX 2060 SUPER</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" checked>
+                        <label class="form-check-label">GeForce RTX 2070 SUPER</label>
+                    </div>
+                    <button class="btn btn-xsm btn-secondary position-absolute top-110 end-0" style="width: fit-content;">apply</button>
+                </div>
+
+            </div>
             
             <!-- Middle -->
-            <div class="col-6 bg-primary">
+            <div class="col-6">
             
             </div>
             
             <!-- Right side -->
-            <div class="col-3 bg-secondary">
+            <div class="col-3">
             
             </div>
                     
@@ -126,6 +186,8 @@
         var modalLogin = new bootstrap.Modal(document.getElementById('modalLogin'), { keyboard: false })
         // modalLogin.show();
     </script>
+
+    <script src="js/rangeSlider.js"></script>
 
 </body>
 </html>

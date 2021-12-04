@@ -3720,6 +3720,12 @@ fieldset:disabled .btn {
   border-radius: 0.2rem;
 }
 
+.btn-xsm, .btn-group-xsm > .btn {
+  padding: 0.1rem 0.3rem;
+  font-size: 0.800rem;
+  border-radius: 0.2rem;
+}
+
 .fade {
   transition: opacity 0.15s linear;
 }
@@ -7527,6 +7533,26 @@ fieldset:disabled .btn {
   top: 100% !important;
 }
 
+.top-110 {
+  top: 110% !important;
+}
+
+.top-120 {
+  top: 120% !important;
+}
+
+.top-130 {
+  top: 130% !important;
+}
+
+.top-140 {
+  top: 140% !important;
+}
+
+.top-150 {
+  top: 150% !important;
+}
+
 .bottom-0 {
   bottom: 0 !important;
 }
@@ -8413,6 +8439,18 @@ fieldset:disabled .btn {
 
 .fs-6 {
   font-size: 1rem !important;
+}
+
+.fs-7 {
+  font-size: 0.75rem !important;
+}
+
+.fs-8 {
+  font-size: 0.5rem !important;
+}
+
+.fs-9 {
+  font-size: 0.25rem !important;
 }
 
 .fst-italic {
