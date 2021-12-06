@@ -11,6 +11,7 @@ require('electron-reload')(__dirname, {
 process.env.NODE_ENV = 'development';
 
 let mainWindow = null;
+let mainView = null;
 
 function createWindow(source) {
 
@@ -21,7 +22,7 @@ function createWindow(source) {
   });
 
   // Create the browser window.
-  let newWindow = new BrowserWindow({
+  mainView = new BrowserWindow({
     // icon: 'src/icons/icon.ico',
     show: false,
     frame: false,
@@ -36,18 +37,18 @@ function createWindow(source) {
     },
   });
 
-  windowState.manage(newWindow);
+  windowState.manage(mainView);
 
-  newWindow.loadURL(source);
+  mainView.loadURL(source);
 
   if (process.env.NODE_ENV == 'development')
-    newWindow.webContents.openDevTools();
+    mainView.webContents.openDevTools();
 
-  newWindow.once('ready-to-show', () => {
-    newWindow.show();
+  mainView.once('ready-to-show', () => {
+    mainView.show();
   });
 
-  return newWindow;
+  return mainView;
 }
 
 app.userAgentFallback = app.userAgentFallback.replace('Electron/' + process.versions.electron, '');
@@ -90,16 +91,25 @@ ipcMain.on('xpath', function (event, xpath) {
   console.log(xpath);
 });
 
+let productView = null;
+
 ipcMain.handle('loadURL', (event, source) => {
   if (mainWindow) {
-    const view = new BrowserView({
+    productView = new BrowserView({
       webPreferences: {
         preload: path.join(__dirname, 'src/js/preload.js')
       }
     });
-    mainWindow.setBrowserView(view)
-    view.setBounds({ x: 200, y: 100, width: 992, height: 992 })
-    view.webContents.loadURL(source)
-    view.webContents.openDevTools();
+    mainWindow.setBrowserView(productView)
+    productView.setBounds({ x: 200, y: 100, width: 992, height: 992 })
+    productView.webContents.loadURL(source)
+  }
+});
+
+
+ipcMain.on('closeProductView', function (event) {
+  if (productView) {
+    mainWindow.setBrowserView(mainView);
+    productView.webContents.destroy();
   }
 });
