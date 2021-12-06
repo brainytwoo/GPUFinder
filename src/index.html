@@ -1,8 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
+  <head>  
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>GPU Finder</title>
+    
+    <script defer src="..\node_modules\@fortawesome\fontawesome-free\js\brands.js"></script>
+    <script defer src="..\node_modules\@fortawesome\fontawesome-free\js\solid.js"></script>
+    <script defer src="..\node_modules\@fortawesome\fontawesome-free\js\fontawesome.js"></script>
+    
+    <link href="../node_modules/@fortawesome/fontawesome-free/css/fontawesome.css" rel="stylesheet" type="text/css">
+    
+    <script src="https://unpkg.com/rangeable@latest/dist/rangeable.min.js"></script>
+    <link rel="stylesheet" href="modules/rangeable/rangeable.css">
+    
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/master.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="fonts/arvo/stylesheet.css">
 
     <script>
       const ipcRenderer = require('electron').ipcRenderer;
@@ -12,76 +29,278 @@
       const puppeteer = require('puppeteer');
       const scraperjs = require('scraperjs');
     </script>
-
-    <script defer src="..\node_modules\@fortawesome\fontawesome-free\js\brands.js"></script>
-    <script defer src="..\node_modules\@fortawesome\fontawesome-free\js\solid.js"></script>
-    <script defer src="..\node_modules\@fortawesome\fontawesome-free\js\fontawesome.js"></script>
-
-    <link href="../node_modules/@fortawesome/fontawesome-free/css/fontawesome.css" rel="stylesheet" type="text/css">
-
-    <link rel="stylesheet" href="css/bootstrap.css">
-    <link rel="stylesheet" href="css/animate.css">
-    <link rel="stylesheet" href="css/topnav.css">
-    <link rel="stylesheet" href="css/master.css">
-
   </head>
-  <body>
+  <body class="h-100 w-100">
 
-    <!-- New source modal -->
-    <div class="modal fade" id="newSourceModal" tabindex="-1" aria-labelledby="newLinkModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-lg-down">
-        <div class="modal-content">
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-6" style="width: 450px; height: 570px; background-color: #5A6978;">
+
+          <img src="media/GpuChip.png"
+            class="rounded-circle bg-primary p-4 position-absolute top-0 start-50 translate-middle"
+            style="width: 140px; height: 140px;">
+
+          <h2 class="text-color-white position-absolute top-20 start-50 translate-middle"
+            style="font-family: 'arvoregular';">GPU Finder</h1>
+
+            <div class="vstack gap-2 col-md-8 position-absolute top-63 start-50 translate-middle">
+
+              <button type="button" class="btn btn-labeled btn-google text-color-secondary">
+                <span class="btn-label position-absolute" style="left: 10px; top: 5px;">
+                  <img src="media/GoogleIcon.png" class="position-relative" style="width: 28px; height: 28px;">
+                </span>
+                Sign in with Google
+              </button>
+
+              <hr class="mx-4" style="color: #fff; border: none; height: 3px;">
+
+              <div class="vstack gap-2">
+
+                <div class="form-floating">
+                  <input type="email" class="form-control bg-secondary" id="loginEmailAddress" placeholder="Enter email">
+                  <label for="loginEmailAddress" style="color: #ced4da;">Email address</label>
+                </div>
+                <div class="form-floating">
+                  <input type="password" class="form-control bg-secondary" id="loginPassword" placeholder="Password">
+                  <label for="loginPassword" style="color: #ced4da;">Password</label>
+                </div>
+
+                <button type="button" class="btn btn-primary mt-2" id="loginSignin">Signin</button>
+
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="loginRemember">
+                  <label class="form-check-label" for="loginRemember">Remember me</label>
+                </div>
+
+                <div>
+                  <button type="button" class="btn btn-link text-primary float-start" id="loginCreateAccount">Create an
+                    Account</button>
+                  <button type="button" class="btn btn-link text-primary float-end" id="loginForgotPassword">Forgot
+                    Password</button>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Signin</button> -->
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Add GPU Modals -->
+    <div class="modal fade" id="addGpuModal_Link" aria-hidden="true" aria-labelledby="addGpuModalLabel_Link"
+      tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content needs-validation">
           <div class="modal-header">
-            <h5 class="modal-title" id="newLinkModalLabel">New Source</h5>
+            <h5 class="modal-title" id="addGpuModalLabel_Link">New GPU's Source</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <input id="modalSourceSource" type="text" class="form-control" placeholder="Source" aria-label="Source">
+            <input id="addGpuModal_Link_input" type="text" data-lpignore="true" class="form-control"
+              placeholder="Link to new GPU" required>
+            <div class="invalid-feedback">
+              Please provide a web link to the GPU.
+            </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button id="modalSourceSave" type="button" class="btn btn-primary">Save</button>
+            <button class="btn btn-primary" id="addGpuModal_Link_continue">Continue</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div id="logo">
-      <img src="gpuFinder.png" alt="Flame Logo" height="45">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="addGpuOffCanvas_XPaths"
+      aria-labelledby="addGpuOffCanvas_XPathsLabel">
+      <div class="offcanvas-header">
+        <h5 id="addGpuOffCanvas_XPathsLabel">Offcanvas right</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <button class="btn btn-primary" aria-label="Close">Submit</button>
+      </div>
     </div>
 
-    <nav class="topnav dragable navbar navbar-expand navbar-dark bg-dark">
-      <div class="dragnull navbar-brand">&emsp;&emsp;&emsp;GPU Finder</div>
-      <div class="collapse navbar-collapse" id="topNavbar">
-        <ul class="dragnull navbar-nav mr-auto">
-          <!-- <li class="nav-item active">
-            <a class="nav-link" href="#">Home</a>
-          </li> -->
-        </ul>
-        <div class="dragnull window-controls-container">
-          <button class="window-controls btn" type="button" onclick="minimizeWindow()"><i class="fas fa-window-minimize"></i></button>
-          <button class="window-controls btn" type="button" onclick="maximizeWindow()"><i class="fas fa-window-maximize"></i></button>
-          <button class="window-controls btn" type="button" onclick="closeWindow()"><i class="fas fa-times"></i></button>
-        </div>
+
+    <!-- Topbar -->
+    <div class="bg-dark w-100 position-relative" style="height: 35px;">
+      <div class="bg-dark position-relative" style="width: 230px; height: 99px; border-bottom-right-radius: 56px; ">
+
+        <div class="bg-dark position-absolute" style="width: 275px; height: 67px; top: 0; left: 0; z-index: -2;"></div>
+        <div class="bg-body rounded-circle position-absolute"
+          style="width: 112px; height: 112px; top: 35px; left: 219px; z-index: -1;"></div>
+
+        <img src="media/GpuChip.png" class="rounded-circle bg-primary p-1"
+          style="width: 75px; height: 75px; margin: 12px;">
+        <h3 class="text-color-white position-absolute"
+          style="font-family: 'arvoregular'; top: 22px; left: 99px; font-size: 24px;">GPU<br>Finder</h3>
+
       </div>
-    </nav>
 
-    <div class="content-area">
+      <button type="button" class="btn-close btn-close position-absolute top-0 end-0" style="padding: 9px;"
+        aria-label="Close"></button>
 
-      <div id="page-gpulist" class="page card-deck px-0">
+    </div>
 
-        <div class="card h-100 mx-3" style="min-width: 675px;">
-          <div class="card-body py-2 table-container h-100">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newSourceModal"><i class="fas fa-plus"></i></button>
-            <div id="productContainer"></div>
+    <!-- Main stuffs -->
+    <div class="row w-100 h-100 p-2">
+    
+      <!-- Left side -->
+      <div class="col-md-4 col-lg-3 px-4" style="padding-top: 64px;">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-secondary dropdown-toggle mt-2 w-100" type="button" id="filterProfileDropdown"
+            data-bs-toggle="dropdown" aria-expanded="false" data-bs-offset="0,5">
+            Filter Profile
+          </button>
+          <ul class="dropdown-menu dropdown-menu-dark w-100" aria-labelledby="filterProfileDropdown">
+            <li><a class="dropdown-item" href="#">2060 - Example</a></li>
+            <li><a class="dropdown-item" href="#">3060 - Example</a></li>
+            <button class="btn shadow rounded-circle btn-primary position-absolute top-100 start-100 translate-middle"><i
+                class="fas fa-plus"></i></button>
+          </ul>
+        </div>
+    
+        <div class="position-relative" style="margin-top: 45px; margin-bottom: 14px;">
+          <div class="number position-absolute end-0" id="pricefilterMin"></div>
+          <h6 class="position-absolute top-20 start-50 translate-middle">Price</h6>
+          <div class="number my-2" id="pricefilterMax"></div>
+          <div class="range">
+            <input type="range" id="pricefilter">
           </div>
+          <button class="btn btn-xsm btn-secondary position-absolute top-130 end-0">apply</button>
         </div>
-
+    
+        <div class="position-relative btn-group-vertical w-100" style="margin-top: 45px;">
+          <h6 class="position-absolute top-20 start-50 translate-middle">Brand</h6>
+          <div class="form-check" style="margin-top: 35px;">
+            <input class="form-check-input" type="checkbox" value="" checked>
+            <label class="form-check-label">All</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" checked>
+            <label class="form-check-label">Asus</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" checked>
+            <label class="form-check-label">EVGA</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" checked>
+            <label class="form-check-label">MSI</label>
+          </div>
+          <button class="btn btn-xsm btn-secondary position-absolute top-110 end-0"
+            style="width: fit-content;">apply</button>
+        </div>
+    
+        <div class="position-relative btn-group-vertical w-100" style="margin-top: 45px;">
+          <h6 class="position-absolute top-20 start-50 translate-middle">Chipset</h6>
+          <div class="form-check" style="margin-top: 35px;">
+            <input class="form-check-input" type="checkbox" value="" checked>
+            <label class="form-check-label">All</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" checked>
+            <label class="form-check-label">GeForce RTX 2060 SUPER</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" checked>
+            <label class="form-check-label">GeForce RTX 2070 SUPER</label>
+          </div>
+          <button class="btn btn-xsm btn-secondary position-absolute top-110 end-0"
+            style="width: fit-content;">apply</button>
+        </div>
+    
       </div>
-
+    
+      <!-- Middle -->
+      <div class="col-md-8 col-lg-7 position-relative">
+        <div class="input-group position-absolute top-0 end-0 mt-3" style="max-width: 300px;">
+          <input type="text" class="form-control" placeholder="Search" aria-label="Search">
+          <button class="btn btn-secondary text-dark" type="button" id="searchButton"><i class="fas fa-search"></i></button>
+        </div>
+    
+        <div class="dropdown position-absolute top-5 px-4">
+          <button class="btn text-primary p-0 fs-4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-ellipsis-h"></i></button>
+          <ul class="dropdown-menu dropdown-menu-dark w-100">
+            <li><a class="dropdown-item" data-bs-target="#addGpuModal_Link" data-bs-toggle="modal" href="#">Add GPU</a></li>
+            <li><a class="dropdown-item" href="#">Manage Alerts</a></li>
+          </ul>
+        </div>
+    
+    
+        <table class="table table-hover mt-8 mx-2">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">Name</th>
+              <th scope="col">Brand</th>
+              <th scope="col">Chipset</th>
+              <th scope="col">Lowest</th>
+              <th scope="col">Current</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th class="text-primary text-end fs-3 py-0 mx-2" scope="row"><i class="fas fa-microchip"></i></th>
+              <td>EVGA XC GAMING</td>
+              <td>EVGA</td>
+              <td>GeForce RTX 3060</td>
+              <td>$399.99</td>
+              <td class="text-danger">$766.99</td>
+              <td style="max-width: 30px;"><button class="btn btn-primary btn-sm"><i
+                    class="fas fa-shopping-cart"></i></button></td>
+            </tr>
+            <tr>
+              <th class="text-primary text-end fs-3 py-0 mx-2" scope="row"><i class="fas fa-microchip"></i></th>
+              <td>Asus DUAL EVO OC</td>
+              <td>Asus</td>
+              <td>GeForce RTX 2060</td>
+              <td>$439.00</td>
+              <td class="text-success">$439.00</td>
+              <td style="max-width: 30px;"><button class="btn btn-primary btn-sm"><i
+                    class="fas fa-shopping-cart"></i></button></td>
+            </tr>
+          </tbody>
+        </table>
+    
+      </div>
+    
+      <!-- Right side -->
+      <div class="col-lg-2">
+    
+      </div>
+    
     </div>
 
-    <script src="js/main.js"></script>
-    <script src="js/linkManager.js"></script>
+    </div>
 
   </body>
+
+  <script>
+    var loginModal = new bootstrap.Modal(document.getElementById('loginModal'), { keyboard: false });
+    // loginModal.show();
+
+    // var addGpuModal_Link = new bootstrap.Modal(document.getElementById('addGpuModal_Link'));
+    // addGpuModal_Link.show();
+  </script>
+
+  <script src="js/rangeSlider.js"></script>
+  <script src="js/linkManager.js"></script>
+  <script src="js/main.js"></script>
+
+  <!-- <script
+    src="//rss.bloople.net/?url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DGPU&showtitle=false&type=js"></script> -->
+
+          <!-- <div class="dragnull window-controls-container">
+            <button class="window-controls btn" type="button" onclick="minimizeWindow()"><i class="fas fa-window-minimize"></i></button>
+            <button class="window-controls btn" type="button" onclick="maximizeWindow()"><i class="fas fa-window-maximize"></i></button>
+            <button class="window-controls btn" type="button" onclick="closeWindow()"><i class="fas fa-times"></i></button>
+          </div> -->
+
 </html>
