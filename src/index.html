@@ -31,6 +31,7 @@
     </script>
   </head>
   <body class="h-100 w-100">
+  <body class="h-100 w-100 overflow-hidden">
 
     <!-- Login Modal -->
     <div class="modal fade" id="loginModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -128,6 +129,7 @@
 
     <!-- Topbar -->
     <div class="bg-dark w-100 position-relative" style="height: 35px;">
+    <div class="bg-dark w-100 position-relative draggable" style="height: 35px;">
       <div class="bg-dark position-relative" style="width: 230px; height: 99px; border-bottom-right-radius: 56px; ">
 
         <div class="bg-dark position-absolute" style="width: 275px; height: 67px; top: 0; left: 0; z-index: -2;"></div>
@@ -143,6 +145,13 @@
 
       <button type="button" class="btn-close btn-close position-absolute top-0 end-0" style="padding: 9px;"
         aria-label="Close"></button>
+      <div class="draggable-null position-absolute top-0 end-0">
+        <button class="window-controls btn" type="button" onclick="minimizeWindow()"><i
+            class="fas fa-window-minimize"></i></button>
+        <button class="window-controls btn" type="button" onclick="maximizeWindow()"><i
+            class="fas fa-window-maximize"></i></button>
+        <button class="window-controls btn" type="button" onclick="closeWindow()"><i class="fas fa-times"></i></button>
+      </div>
 
     </div>
 
@@ -151,6 +160,7 @@
     
       <!-- Left side -->
       <div class="col-md-4 col-lg-3 px-4" style="padding-top: 64px;">
+      <div class="col-md-4 col-lg-3 px-4 overflow-auto" style="padding-top: 64px;">
         <div class="dropdown">
           <button class="btn btn-sm btn-secondary dropdown-toggle mt-2 w-100" type="button" id="filterProfileDropdown"
             data-bs-toggle="dropdown" aria-expanded="false" data-bs-offset="0,5">
@@ -284,10 +294,15 @@
 
   <script>
     var loginModal = new bootstrap.Modal(document.getElementById('loginModal'), { keyboard: false });
+    // const loginModal = new bootstrap.Modal(document.getElementById('loginModal'), { keyboard: false });
     // loginModal.show();
 
     // var addGpuModal_Link = new bootstrap.Modal(document.getElementById('addGpuModal_Link'));
+    // const addGpuModal_Link = new bootstrap.Modal(document.getElementById('addGpuModal_Link'));
     // addGpuModal_Link.show();
+
+    // const addGpuOffCanvas_XPaths = new bootstrap.Offcanvas(addGpuOffCanvas_XPaths_el);
+    // addGpuOffCanvas_XPaths.show();
   </script>
 
   <script src="js/rangeSlider.js"></script>

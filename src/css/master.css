@@ -1,4 +1,14 @@
 
+.draggable {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-app-region: drag;
+}
+
+.draggable-null {
+  -webkit-app-region: no-drag;
+}
+
 /* scrollbar stuffs */
 /* Width */
 ::-webkit-scrollbar {
