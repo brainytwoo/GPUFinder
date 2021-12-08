@@ -45,34 +45,37 @@ const productInfoSelectorInfoThumbnail = document.getElementById('productInfoSel
 
 function xpathsViewTransitionManager(event) {
 
+    const fakeEnum = {
+        'title': 0,
+        'brand': 1,
+        'chipset': 2,
+        'price': 3,
+        'thumbnail': 4
+    }
+
+    // reset everything to default
     for (let i = 0; i < productInfoSelectorInfoInputs.length; i++) {
         productInfoSelectorInfoInputs[i].classList.remove('bg-success');
+        productInfoSelectorInfoInputs[i].classList.add('placeholder');
+        productInfoSelectorInfoInputs[i].parentElement.classList.add('placeholder-wave');
         productInfoSelectorInfoInputs[i].disabled = true;
     };
 
     productInfoSelectorInfoThumbnail.src = 'https://via.placeholder.com/365x150/5A6978?text=+';
 
-    switch (event.target.attributes.data_select.value) {
-        case 'title':
-            productInfoSelectorInfoInputs[0].classList.add('bg-success');
-            productInfoSelectorInfoInputs[0].disabled = false;
-            break;
-        case 'brand':
-            productInfoSelectorInfoInputs[1].classList.add('bg-success');
-            productInfoSelectorInfoInputs[1].disabled = false;
-            break;
-        case 'chipset':
-            productInfoSelectorInfoInputs[2].classList.add('bg-success');
-            productInfoSelectorInfoInputs[2].disabled = false;
-            break;
-        case 'price':
-            productInfoSelectorInfoInputs[3].classList.add('bg-success');
-            productInfoSelectorInfoInputs[3].disabled = false;
-            break;
-        case 'thumbnail':
-            productInfoSelectorInfoThumbnail.src = 'https://via.placeholder.com/365x150/1F6660?text=+';
-            break;
+    // apply selection styles to specific elements
+    const targetIndex = fakeEnum[event.target.attributes.data_select.value];
+
+    if (targetIndex !== 4) {
+        productInfoSelectorInfoInputs[targetIndex].classList.add('bg-success');
+        productInfoSelectorInfoInputs[targetIndex].classList.remove('placeholder');
+        productInfoSelectorInfoInputs[targetIndex].parentElement.classList.remove('placeholder-wave');
+        productInfoSelectorInfoInputs[targetIndex].disabled = false;
+    } else {
+        productInfoSelectorInfoThumbnail.src = 'https://via.placeholder.com/365x150/2aa198?text=+';
     }
+
+
 }
 for (const element of productInfoSelectorRadioInputs) {
     element.onclick = xpathsViewTransitionManager;

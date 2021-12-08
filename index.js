@@ -4,14 +4,14 @@ const windowStateKeeper = require('electron-window-state');
 const path = require('path');
 
 require('electron-reload')(__dirname, {
-  electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
+  electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
+  hardResetMethod: 'exit'
 });
 
 // SET ENV
 process.env.NODE_ENV = 'development';
 
 let mainWindow = null;
-let mainView = null;
 
 function createWindow(source) {
 
@@ -22,7 +22,7 @@ function createWindow(source) {
   });
 
   // Create the browser window.
-  mainView = new BrowserWindow({
+  let mainView = new BrowserWindow({
     // icon: 'src/icons/icon.ico',
     show: false,
     frame: false,
@@ -81,8 +81,6 @@ ipcMain.handle('windowAction', (event, action) => {
       case 3:
         mainWindow.close();
         break;
-      default:
-        break;
     }
   }
 })
@@ -100,16 +98,29 @@ ipcMain.handle('loadURL', (event, source) => {
         preload: path.join(__dirname, 'src/js/preload.js')
       }
     });
-    mainWindow.setBrowserView(productView)
-    productView.setBounds({ x: 200, y: 100, width: 992, height: 992 })
-    productView.webContents.loadURL(source)
+
+    mainWindow.setBrowserView(productView);
+
+    productView.setBounds({ 
+      x: 75,
+      y: 75,
+      width: mainWindow.getBounds().width - 150 - 400,
+      height: mainWindow.getBounds().height - 150
+    });
+
+    productView.setAutoResize({
+      width: true,
+      height: true
+    });
+
+    productView.webContents.loadURL(source);
   }
 });
 
 
 ipcMain.on('closeProductView', function (event) {
   if (productView) {
-    mainWindow.setBrowserView(mainView);
+    mainWindow.setBrowserView(null);
     productView.webContents.destroy();
   }
 });
