@@ -30,7 +30,6 @@
       const scraperjs = require('scraperjs');
     </script>
   </head>
-  <body class="h-100 w-100">
   <body class="h-100 w-100 overflow-hidden">
 
     <!-- Login Modal -->
@@ -118,17 +117,57 @@
     <div class="offcanvas offcanvas-end" tabindex="-1" id="addGpuOffCanvas_XPaths"
       aria-labelledby="addGpuOffCanvas_XPathsLabel">
       <div class="offcanvas-header">
-        <h5 id="addGpuOffCanvas_XPathsLabel">Offcanvas right</h5>
+        <h5 id="addGpuOffCanvas_XPathsLabel">Select GPU Info</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        <button class="btn btn-primary" aria-label="Close">Submit</button>
+        
+        <div class="btn-group mt-8 w-100" role="group" id="productInfoSelector" aria-label="Select elements...">          
+          <input type="radio" class="btn-check" name="btnradio" id="productInfoSelector_thumbnail" data_select="thumbnail" autocomplete="off" checked>
+          <label class="btn btn-outline-primary" for="productInfoSelector_thumbnail">Thumbnail</label>
+          
+          <input type="radio" class="btn-check" name="btnradio" id="productInfoSelector_title" data_select="title" autocomplete="off">
+          <label class="btn btn-outline-primary" for="productInfoSelector_title">Title</label>
+          
+          <input type="radio" class="btn-check" name="btnradio" id="productInfoSelector_brand" data_select="brand" autocomplete="off">
+          <label class="btn btn-outline-primary" for="productInfoSelector_brand">Brand</label>
+          
+          <input type="radio" class="btn-check" name="btnradio" id="productInfoSelector_chipset" data_select="chipset" autocomplete="off">
+          <label class="btn btn-outline-primary" for="productInfoSelector_chipset">Chipset</label>
+
+          <input type="radio" class="btn-check" name="btnradio" id="productInfoSelector_price" data_select="price" autocomplete="off">
+          <label class="btn btn-outline-primary" for="productInfoSelector_price">Price</label>
+        </div>
+        
+        <div class="card" id="addGpuOffCanvas_XPathElementSelection">
+          <img src="https://via.placeholder.com/365x150/1F6660?text=+" id="productInfoSelectorInfoThumbnail" class="card-img-top" alt="">
+          <div class="card-body">
+
+            <div class="placeholder-wave col-12">
+              <input type="text" class="card-title form-control placeholder" disabled>
+            </div>
+
+            <div class="placeholder-wave col-8">
+              <input type="text" class="form-control placeholder" disabled>
+            </div>
+
+            <div class="placeholder-wave col-10">
+              <input type="text" class="form-control placeholder" disabled>
+            </div>
+
+            <div class="placeholder-wave col-4">
+              <input type="text" class="form-control placeholder" disabled>
+            </div>
+
+          </div>
+        </div>
+
+        <button class="btn btn-primary w-100" aria-label="Close">Submit</button>
       </div>
     </div>
 
 
     <!-- Topbar -->
-    <div class="bg-dark w-100 position-relative" style="height: 35px;">
     <div class="bg-dark w-100 position-relative draggable" style="height: 35px;">
       <div class="bg-dark position-relative" style="width: 230px; height: 99px; border-bottom-right-radius: 56px; ">
 
@@ -143,8 +182,6 @@
 
       </div>
 
-      <button type="button" class="btn-close btn-close position-absolute top-0 end-0" style="padding: 9px;"
-        aria-label="Close"></button>
       <div class="draggable-null position-absolute top-0 end-0">
         <button class="window-controls btn" type="button" onclick="minimizeWindow()"><i
             class="fas fa-window-minimize"></i></button>
@@ -159,7 +196,6 @@
     <div class="row w-100 h-100 p-2">
     
       <!-- Left side -->
-      <div class="col-md-4 col-lg-3 px-4" style="padding-top: 64px;">
       <div class="col-md-4 col-lg-3 px-4 overflow-auto" style="padding-top: 64px;">
         <div class="dropdown">
           <button class="btn btn-sm btn-secondary dropdown-toggle mt-2 w-100" type="button" id="filterProfileDropdown"
@@ -293,11 +329,9 @@
   </body>
 
   <script>
-    var loginModal = new bootstrap.Modal(document.getElementById('loginModal'), { keyboard: false });
     // const loginModal = new bootstrap.Modal(document.getElementById('loginModal'), { keyboard: false });
     // loginModal.show();
 
-    // var addGpuModal_Link = new bootstrap.Modal(document.getElementById('addGpuModal_Link'));
     // const addGpuModal_Link = new bootstrap.Modal(document.getElementById('addGpuModal_Link'));
     // addGpuModal_Link.show();
 
