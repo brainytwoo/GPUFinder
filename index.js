@@ -85,8 +85,10 @@ ipcMain.handle('windowAction', (event, action) => {
   }
 })
 
-ipcMain.on('xpath', function (event, xpath) {
+ipcMain.on('xpath', function (event, xpath, inner) {
   console.log(xpath);
+  console.log(inner);
+  mainWindow.webContents.send('xpath', xpath, inner);
 });
 
 let productView = null;

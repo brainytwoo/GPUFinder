@@ -21,14 +21,6 @@
     <link rel="stylesheet" href="css/animate.css">
     <link rel="stylesheet" href="fonts/arvo/stylesheet.css">
 
-    <script>
-      const ipcRenderer = require('electron').ipcRenderer;
-      let jQuery, $ = require('jquery');
-      const bootstrap = require('bootstrap')
-      const moment = require('moment');
-      const puppeteer = require('puppeteer');
-      const scraperjs = require('scraperjs');
-    </script>
   </head>
   <body class="h-100 w-100 overflow-hidden">
 
@@ -140,23 +132,23 @@
         </div>
         
         <div class="card" id="addGpuOffCanvas_XPathElementSelection">
-          <img src="https://via.placeholder.com/365x150/2aa198?text=+" id="productInfoSelectorInfoThumbnail" class="card-img-top" alt="">
+          <img src="https://via.placeholder.com/365x365/2aa198?text=+" id="productInfoSelectorInfoThumbnail" class="card-img-top border border-success border-4" data_complete="false" alt="" style="width: 365px; height: 365px;">
           <div class="card-body">
 
-            <div class="placeholder-wave col-12">
-              <input type="text" class="card-title form-control placeholder" disabled>
+            <div class="placeholder-wave col-12 input-group-lg">
+              <input type="text" class="card-title form-control placeholder" data_complete="false" disabled>
             </div>
 
             <div class="placeholder-wave col-8">
-              <input type="text" class="form-control placeholder" disabled>
+              <input type="text" class="form-control placeholder" data_complete="false" disabled>
             </div>
 
             <div class="placeholder-wave col-10">
-              <input type="text" class="form-control placeholder" disabled>
+              <input type="text" class="form-control placeholder" data_complete="false" disabled>
             </div>
 
             <div class="placeholder-wave col-4">
-              <input type="text" class="form-control placeholder" disabled>
+              <input type="text" class="form-control placeholder" data_complete="false" disabled>
             </div>
 
           </div>
@@ -339,9 +331,10 @@
     // addGpuOffCanvas_XPaths.show();
   </script>
 
+  <script src="js/main.js"></script>
   <script src="js/rangeSlider.js"></script>
   <script src="js/linkManager.js"></script>
-  <script src="js/main.js"></script>
+  <!-- <script src="js/preload.js"></script> -->
 
   <!-- <script
     src="//rss.bloople.net/?url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DGPU&showtitle=false&type=js"></script> -->

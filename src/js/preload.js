@@ -2,22 +2,32 @@
 const ipcRenderer = require('electron').ipcRenderer;
 
 document.addEventListener('click', (event) => {
-  ipcRenderer.send('xpath', getPathTo(event.target));
+    if (event.target.tagName.toLowerCase() == 'img') {
+        ipcRenderer.send('xpath', getElementXPath(event.target), event.target.src);
+    } else {
+        ipcRenderer.send('xpath', getElementXPath(event.target), event.target.innerHTML);
+    }
 });
 
-function getPathTo(element) {
-    if (element.tagName == 'HTML')
-        return '/HTML[1]';
-    if (element === document.body)
-        return '/HTML[1]/BODY[1]';
+function getElementXPath(element) {
+    let path = "";
 
-    var ix = 0;
-    var siblings = element.parentNode.childNodes;
-    for (var i = 0; i < siblings.length; i++) {
-        var sibling = siblings[i];
-        if (sibling === element)
-            return getPathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']';
-        if (sibling.nodeType === 1 && sibling.tagName === element.tagName)
-            ix++;
+    for (; element && element.nodeType == 1; element = element.parentNode) {
+        idx = getElementIdx(element);
+        xname = element.tagName;
+        if (idx > 1) xname += "[" + idx + "]";
+        path = "/" + xname + path;
     }
+
+    return path;
+}
+
+function getElementIdx(element) {
+    let count = 1;
+
+    for (let sib = element.previousSibling; sib; sib = sib.previousSibling) {
+        if (sib.nodeType == 1 && sib.tagName == element.tagName) count++
+    }
+
+    return count;
 }
