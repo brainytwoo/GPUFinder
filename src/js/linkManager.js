@@ -1,8 +1,3 @@
-
-$("#modalSourceSave").click(function() {
-  //scrapeProduct($("#modalSourceSource").val());
-});
-
 async function scrapeProduct(url) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();

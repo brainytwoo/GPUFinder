@@ -1,10 +1,3 @@
-const ipcRenderer = require('electron').ipcRenderer;
-let jquery, $ = require('jquery');
-const bootstrap = require('bootstrap')
-const moment = require('moment');
-const puppeteer = require('puppeteer');
-const scraperjs = require('scraperjs');
-
 // Window controls
 function minimizeWindow () { ipcRenderer.invoke('windowAction', 1) }
 function maximizeWindow () { ipcRenderer.invoke('windowAction', 2) }
@@ -113,6 +106,65 @@ ipcRenderer.on('xpath', (event, xpath, inner) => {
     }
 });
 
+function thumbnailToHtml(href, type, row) {
+    console.log(href);
+    return `<img src="${href}" style="max-height: 35px;">`
+}
+
+function dtPrice(price, type, row) {
+    const cPrice = row.lowest();
+    const pPrice = row.prevLowest();
+
+    if (cPrice < pPrice) 
+        return `<span class="text-success>$${cPrice}</span>`;
+    else if (cPrice > pPrice)
+        return `<span class="text-danger>$${cPrice}</span>`;
+    else
+        return `<span>$${cPrice}</span>`;
+}
+
+function initDataTable() {
+    productTable = $('#products').DataTable({ 
+        data: productData,
+        autoWidth: true,
+        scrollY: "500px",
+        dom: 'ltpr',
+        lengthMenu: [[25, 50, 100, 150, -1], [ 25, 50, 100, 150, "All"]],
+        columns: [
+            { data: 'thumbnail', render: thumbnailToHtml, orderable: false },
+            { data: 'title' },
+            { data: 'brand' },
+            { data: 'chipset' },
+            { data: 'lowest', render: dtPrice }
+        ]
+    });
+    
+    let input = document.getElementById('productsSearch');
+    let timeout = null;
+
+    input.addEventListener('keyup', function (e) {
+        clearTimeout(timeout);
+
+        if (e.code === "Enter")
+            searchTable(input.value);
+        else
+            timeout = setTimeout(function () {
+                searchTable(input.value);
+            }, 1000);
+    });
+
+    document.getElementById('searchButton').onclick = () => {
+        searchTable(input.value);
+    };
+}
+initDataTable();
+
+function searchTable(value) {
+    console.log('Search Value:', value);
+    productTable.search(value).draw();
+}
+
 // temp open xpaths canvas upon loading for dev purposes
-ipcRenderer.invoke('loadURL', 'https://www.amazon.com/ZOTAC-GeForce-Graphics-IceStorm-ZT-A30600H-10M/dp/B08W8DGK3X/ref=sr_1_4?keywords=3060&qid=1639014780&sr=8-4');
-addGpuOffCanvas_XPaths.show();
+// ipcRenderer.invoke('loadURL', 'https://www.amazon.com/ZOTAC-GeForce-Graphics-IceStorm-ZT-A30600H-10M/dp/B08W8DGK3X/ref=sr_1_4?keywords=3060&qid=1639014780&sr=8-4');
+// addGpuOffCanvas_XPaths.show();
+
