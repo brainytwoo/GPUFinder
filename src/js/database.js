@@ -1,4 +1,4 @@
-function Product(thumbnail, title, brand, chipset, sources ) {
+function Product(thumbnail, title, brand, chipset, sources) {
     this.thumbnail = thumbnail ? thumbnail : '../src/media/GpuChip2.png';
     this.title = title;
     this.brand = brand;
@@ -16,39 +16,45 @@ function Product(thumbnail, title, brand, chipset, sources ) {
     }
 
     this.prevLowest = function () {
-        let price = 0;
+        const current = this.lowest();
         if (this.sources.length > 0) {
-            const current = this.lowest();
-            price = current;
+            let prevPrice = Number.MAX_SAFE_INTEGER;
             this.sources.forEach( source => {
-                const prevSourcePrice = source.history.at(-1).price;
-                if (prevSourcePrice != current && prevSourcePrice < price)
-                    price = prevSourcePrice;
+                let prevSourcePrice = source.history.at(-1).price;
+
+                if (prevSourcePrice === current)
+                    if (source.history.length > 1)
+                        prevSourcePrice = source.history.at(-2).price;
+
+                if (prevSourcePrice < prevPrice)
+                    prevPrice = prevSourcePrice;
             });
+            return prevPrice === Number.MAX_SAFE_INTEGER ? current : prevPrice;
         }
-        return price;
+        return current;
     }
 
     this.lowest = function () {
         let price = 0;
         if (this.sources.length > 0) {
-            price = Number.MAX_VALUE;
+            price = Number.MAX_SAFE_INTEGER;
             this.sources.forEach(source => {
                 const latestSourcePrice = source.history.at(-1).price;
                 if (latestSourcePrice < price)
                     price = latestSourcePrice;
             });
         }
-        return price;
+        return price === Number.MAX_SAFE_INTEGER ? 0 : price;
     }
 }
 
-function Source ( title, href, history ) {
+function Source (title, href, history) {
     this.title = title;
     this.href = href;
     this.history = typeof (history) === 'object' ? history : [];
+    this.priceXPath = undefined;
 
-    this.priceChange = function (price) {
+    this.newPrice = function (price) {
         this.history.push({ 
             price: price,
             timestamp: Date.now()
@@ -79,8 +85,8 @@ for (let index = 0; index < 100; index++) {
     let product = new Product(undefined, title[rand(0, 5)], brand[rand(0, 8)], chipset[rand(0, 5)]);
     let source = new Source('Amazon', 'https://www.amazon.com/ZOTAC-GeForce-192-bit-Graphics-ZT-T20600H-10M/dp/B07TDN1SC5/ref=dp_fod_2?pd_rd_i=B07TDN1SC5&th=1');
 
-    source.priceChange(rand(100, 1000, 2));
-    source.priceChange(rand(100, 1000, 2));
+    source.newPrice(rand(100, 1000, 2));
+    source.newPrice(rand(200, 900, 2));
     product.addSource(source);
 
     productData.push(product);

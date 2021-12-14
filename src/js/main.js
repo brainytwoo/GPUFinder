@@ -21,7 +21,7 @@ function submitLink() {
         addGpuModal_Link_input.classList.add('is-invalid');
     }
 }
-addGpuModal_Link_continue.onclick = submitLink
+addGpuModal_Link_continue.onclick = submitLink;
 
 // Remove invalid visuals from new gpu modal input when user re-selects it
 addGpuModal_Link_input.addEventListener('focus', (event) => {
@@ -98,7 +98,7 @@ ipcRenderer.on('xpath', (event, xpath, inner) => {
     
     if ( targetIndex !== 4) {
         productInfoSelectorInfoInputs[targetIndex].attributes.data_complete.value = 'true';
-        productInfoSelectorInfoInputs[targetIndex].value = inner;
+        productInfoSelectorInfoInputs[targetIndex].value = inner.trim();
         productInfoSelectorInfoInputs[targetIndex].classList.add('form-control-transparent');
     } else {
         productInfoSelectorInfoThumbnail.src = inner;
@@ -106,39 +106,65 @@ ipcRenderer.on('xpath', (event, xpath, inner) => {
     }
 });
 
-function thumbnailToHtml(href, type, row) {
-    console.log(href);
-    return `<img src="${href}" style="max-height: 35px;">`
-}
+function dtPrice(data) {
+    const cPrice = data.lowest();
+    const pPrice = data.prevLowest();
 
-function dtPrice(price, type, row) {
-    const cPrice = row.lowest();
-    const pPrice = row.prevLowest();
+    console.log(`Current ${cPrice} - ${pPrice} Previous`)
 
     if (cPrice < pPrice) 
-        return `<span class="text-success>$${cPrice}</span>`;
+        return `<td class="text-success">$${cPrice}</td>`;
     else if (cPrice > pPrice)
-        return `<span class="text-danger>$${cPrice}</span>`;
+        return `<td class="text-danger">$${cPrice}</td>`;
     else
-        return `<span>$${cPrice}</span>`;
+        return `<td>$${cPrice}</td>`;
+}
+
+function dataToTable(table, data, index) {
+    table.getElementsByTagName('tbody')[0].insertAdjacentHTML('afterbegin', 
+    `<tr data-index=${index} onclick="viewProduct(${index})">
+        <th class="text-primary text-end fs-3 py-0 mx-2" scope="row"><img src="${data.thumbnail}" style="max-height: 35px;"></th>
+        <td>${data.title}</td>
+        <td>${data.brand}</td>
+        <td>${data.chipset}</td>
+        ${dtPrice(data)}
+    </tr>`);
+}
+
+function viewProduct(index) {
+    console.log(productData[index]);
+
+    const product = productData[index];
+
+    const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+    const productModalLabel = document.getElementById('productModalLabel');
+    const productInfo = document.getElementById('productInfo');
+
+    productModalLabel.innerHTML = product.title;
+
+    productInfo.innerHTML = 
+    `<tr>
+        <th class="text-primary text-end fs-3 py-0 mx-2" scope="row"><img src="${product.thumbnail}" style="max-height: 35px;"></th>
+        <td>${product.title}</td>
+        <td>${product.brand}</td>
+        <td>${product.chipset}</td>
+        ${dtPrice(product)}
+    </tr>`;
+
+    productModal.show();
 }
 
 function initDataTable() {
-    productTable = $('#products').DataTable({ 
-        data: productData,
-        autoWidth: true,
-        scrollY: "500px",
-        dom: 'ltpr',
-        lengthMenu: [[25, 50, 100, 150, -1], [ 25, 50, 100, 150, "All"]],
-        columns: [
-            { data: 'thumbnail', render: thumbnailToHtml, orderable: false },
-            { data: 'title' },
-            { data: 'brand' },
-            { data: 'chipset' },
-            { data: 'lowest', render: dtPrice }
-        ]
-    });
-    
+    const productTable = document.getElementById('products');
+
+    for (const product in productData) {
+        if (Object.hasOwnProperty.call(productData, product)) {
+            const element = productData[product];
+            
+            dataToTable(productTable, element, product)
+        }
+    }
+
     let input = document.getElementById('productsSearch');
     let timeout = null;
 
@@ -146,25 +172,47 @@ function initDataTable() {
         clearTimeout(timeout);
 
         if (e.code === "Enter")
-            searchTable(input.value);
+            searchTable(productTable, input.value);
         else
             timeout = setTimeout(function () {
-                searchTable(input.value);
+                searchTable(productTable, input.value);
             }, 1000);
     });
 
     document.getElementById('searchButton').onclick = () => {
-        searchTable(input.value);
+        searchTable(productTable, input.value);
     };
 }
 initDataTable();
 
-function searchTable(value) {
-    console.log('Search Value:', value);
-    productTable.search(value).draw();
+async function searchTable(table, value) {
+    console.log('Search Value:' + value);
+
+    value.trim().toLowerCase();
+
+    $(document.getElementById('products').getElementsByTagName('tbody')[0].getElementsByTagName('tr')).filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
 }
+
+function addProduct() {
+    const productTable = document.getElementById('products');
+    const inputs = document.getElementById('addGpuOffCanvas_XPathElementSelection').getElementsByTagName('input');
+
+    const source = new Source('Unknown', addGpuModal_Link_input.value);
+    source.newPrice(parseFloat((inputs[3].value).replace(/[^0-9.]/, '')));
+
+    const product = new Product(undefined, inputs[0].value, inputs[1].value, inputs[2].value);
+    product.addSource(source);
+
+    productData.push(product);
+
+    dataToTable(productTable, product, productData.length - 1);
+
+    addGpuOffCanvas_XPaths.hide();
+}
+document.getElementById('newSourceSubmit').onclick = addProduct;
 
 // temp open xpaths canvas upon loading for dev purposes
 // ipcRenderer.invoke('loadURL', 'https://www.amazon.com/ZOTAC-GeForce-Graphics-IceStorm-ZT-A30600H-10M/dp/B08W8DGK3X/ref=sr_1_4?keywords=3060&qid=1639014780&sr=8-4');
 // addGpuOffCanvas_XPaths.show();
-

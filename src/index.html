@@ -84,7 +84,25 @@
       </div>
     </div>
 
-    <!-- Add GPU Modals -->
+    <!-- Product modal -->
+    <div class="modal fade" id="productModal" aria-hidden="true" aria-labelledby="productModalLabel" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content needs-validation">
+          <div class="modal-header">
+            <h5 class="modal-title" id="productModalLabel">GPU title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div id="productInfo" class="modal-body">
+            
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" data-bs-dismiss="modal" id="addGpuModal_Link_continue">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add GPU Modal and OffCanvas -->
     <div class="modal fade" id="addGpuModal_Link" aria-hidden="true" aria-labelledby="addGpuModalLabel_Link"
       tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
@@ -155,7 +173,7 @@
           </div>
         </div>
 
-        <button class="btn btn-primary w-100" aria-label="Close">Submit</button>
+        <button id="newSourceSubmit" class="btn btn-primary w-100" aria-label="Close">Submit</button>
       </div>
     </div>
 
@@ -256,7 +274,7 @@
     
       <!-- Middle -->
       <div class="col-md-8 col-lg-7 position-relative">
-        <div class="input-group position-absolute top-0 end-0 mt-5" style="max-width: 300px; padding-right: 20px;">
+        <div class="input-group position-absolute top-0 end-0 mt-4" style="max-width: 300px; padding-right: 20px;">
           <input type="text" id="productsSearch" class="form-control form-control-sm" placeholder="Search" aria-label="Search">
           <button class="btn btn-secondary text-dark" type="button" id="searchButton"><i class="fas fa-search"></i></button>
         </div>
@@ -271,7 +289,7 @@
         </div>
     
     
-        <div class="mt-7 mb-2 mx-2" style="height: 92%;">
+        <div style="position: absolute; top: 70px; bottom: 70px; right: 15px; left: 15px; overflow-y: auto; overflow-x: overlay;">
           <table id="products" class="table table-hover table-responsive">
             <thead>
               <tr>
@@ -283,15 +301,6 @@
               </tr>
             </thead>
             <tbody></tbody>
-            <tfoot>
-              <tr>
-                <th scope="col"></th>
-                <th scope="col">Name</th>
-                <th scope="col">Brand</th>
-                <th scope="col">Chipset</th>
-                <th scope="col">Price</th>
-              </tr>
-            </tfoot>
           </table>
         </div>
     
@@ -327,6 +336,9 @@
 
     // const addGpuOffCanvas_XPaths = new bootstrap.Offcanvas(addGpuOffCanvas_XPaths_el);
     // addGpuOffCanvas_XPaths.show();
+
+    // const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+    // productModal.show();
   </script>
 
   <script defer src="..\node_modules\@fortawesome\fontawesome-free\js\brands.js"></script>
