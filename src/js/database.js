@@ -5,12 +5,6 @@ function Product(thumbnail, title, brand, chipset, sources) {
     this.chipset = chipset;
     this.sources = typeof (sources) === 'object' ? sources : [];
 
-    // this.thumbnail = function () { return this._thumbnail; }
-    // this.title = function () { return this._title; }
-    // this.brand = function () { return this._brand; }
-    // this.chipset = function () { return this._chipset; }
-    // this.sources = function () { return this._sources; }
-
     this.addSource = function (source) {
         this.sources.push(source);
     }

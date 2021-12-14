@@ -100,6 +100,8 @@ ipcMain.on('xpath', function (event, xpath, inner) {
 });
 
 ipcMain.handle('loadURL', (event, source) => {
+  console.log(source);
+
   if (mainWindow) {
     productView = new BrowserView({
       webPreferences: {
