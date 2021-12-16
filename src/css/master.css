@@ -11,17 +11,19 @@
 /* scrollbar stuffs */
 /* Width */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 /* Track */
 ::-webkit-scrollbar-track {
   background: #263238;
   border-radius: 5px;
+  width: 8px;
 }
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: #5a6978;
   border-radius: 5px;
+  width: 14px;
 }
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {

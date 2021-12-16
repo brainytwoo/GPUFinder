@@ -132,6 +132,28 @@ function setDisplay(values) {
     pricefilterMin.textContent = `$${values[1]}`;
 }
 
+async function filterGroupManager(filterContainer) {
+    const filterOptions = filterContainer.getElementsByTagName('input');
+
+    filterOptions[0].onchange = function allOnChange() { ifAllSelectAll(filterOptions); };
+
+    for (let index = 1; index < filterOptions.length; index++) {
+        filterOptions[index].onchange = function oneOnChange() {
+            if (!this.checked)
+                filterOptions[0].checked = false;
+        }
+    }
+}
+
+async function ifAllSelectAll(inputs) {
+    if (inputs[0].checked) {
+        for (const input of inputs)
+            input.checked = true;
+        return true;
+    }
+    return false;
+}
+
 // Product table stuffs
 function viewProduct(index) {
     console.log(productData[index]);
@@ -180,42 +202,28 @@ function dataToTable(table, data, index) {
         ${dtPrice(data)}
     </tr>`);
 
-    dataToBrandFilters(table, data, index);
-    dataToChipsetFilters(table, data, index);
+    dataToFilters(table, data, index, document.getElementById('brandfilterContainer'));
+    dataToFilters(table, data, index, document.getElementById('chipsetfilterContainer'));
 }
 
-async function dataToBrandFilters(table, data, index) {
-    let container = document.getElementById('brandfilterContainer');
+async function dataToFilters(table, data, index, container) {
     let filters = container.getElementsByTagName('input');
 
+    const elementData = container.id === 'brandfilterContainer' ? data.brand : data.chipset;
+
     for (const filter of filters) {
-        if (filter.attributes['data-filter'].value.toLowerCase() === data.brand.toLowerCase()) {
+        if (filter.attributes['data-filter'].value.toLowerCase() === elementData.toLowerCase()) {
             return false;
         }
     }
 
     filters[filters.length - 1].parentElement.insertAdjacentHTML('afterend',
         `<div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" data-filter="${data.brand}" checked>
-            <label class="form-check-label">${data.brand}</label>
+            <input class="form-check-input" type="checkbox" value="" data-filter="${elementData}" checked>
+            <label class="form-check-label">${elementData}</label>
         </div>`);
-}
 
-async function dataToChipsetFilters(table, data, index) {
-    let container = document.getElementById('chipsetfilterContainer');
-    let filters = container.getElementsByTagName('input');
-
-    for (const filter of filters) {
-        if (filter.attributes['data-filter'].value.toLowerCase() === data.chipset.toLowerCase()) {
-            return false;
-        }
-    }
-
-    filters[filters.length - 1].parentElement.insertAdjacentHTML('afterend',
-        `<div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" data-filter="${data.chipset}" checked>
-            <label class="form-check-label">${data.chipset}</label>
-        </div>`);
+    filterGroupManager(container);
 }
 
 function setupDataTable() {
