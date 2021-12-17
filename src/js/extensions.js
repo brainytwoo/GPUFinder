@@ -7,5 +7,5 @@ Array.prototype.pushUnique = function (item) {
 }
 
 String.prototype.clean = function () {
-    return this.replace(/[^a-zA-Z0-9.]/, '').trim().toLowerCase();
+    return this.replace(/[^a-zA-Z0-9.]/g, '').trim().toLowerCase();
 }

@@ -8290,6 +8290,26 @@ fieldset:disabled .btn {
   padding: 3rem !important;
 }
 
+.p-6 {
+  padding: 4rem !important;
+}
+
+.p-7 {
+  padding: 5rem !important;
+}
+
+.p-8 {
+  padding: 6rem !important;
+}
+
+.p-9 {
+  padding: 7rem !important;
+}
+
+.p-10 {
+  padding: 8rem !important;
+}
+
 .px-0 {
   padding-right: 0 !important;
   padding-left: 0 !important;

@@ -93,7 +93,32 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div id="productInfo" class="modal-body">
-            
+            <div class="row">
+              <div class="col col-6 px-4 py-2">
+                <img id="productModalThumbnail" src="media/GpuChip.png" class="rounded-circle bg-primary p-2 w-100" style="object-fit: contain;">
+              </div>
+              <div class="col p-6">
+                <ul id="productModalInfoList" class="list-group list-group-flush">
+                  <li class="list-group-item">Title</li>
+                  <li class="list-group-item">Brand</li>
+                  <li class="list-group-item">Chipset</li>
+                  <li class="list-group-item">Price</li>
+                </ul>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col col-8 p-4">
+                <canvas id="productModalChart" class="w-100 h-100"></canvas>
+              </div>
+              <div class="col p-4">
+                <ul id="productModalSources" class="list-group list-group-flush">
+                  <li class="list-group-item">Some Source&ensp;&ensp;<button class="btn btn-primary btn-sm"><i class="fas fa-shopping-cart"></i></button></li>
+                  <li class="list-group-item">Some Source&ensp;&ensp;<button class="btn btn-primary btn-sm"><i class="fas fa-shopping-cart"></i></button></li>
+                  <li class="list-group-item">Some Source&ensp;&ensp;<button class="btn btn-primary btn-sm"><i class="fas fa-shopping-cart"></i></button></li>
+                  <li class="list-group-item">Some Source&ensp;&ensp;<button class="btn btn-primary btn-sm"><i class="fas fa-shopping-cart"></i></button></li>
+                </ul>
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary" data-bs-dismiss="modal">Close</button>
@@ -307,18 +332,6 @@
     const moment = require('moment');
     const puppeteer = require('puppeteer');
     const scraperjs = require('scraperjs');
-
-    // const loginModal = new bootstrap.Modal(document.getElementById('loginModal'), { keyboard: false });
-    // loginModal.show();
-
-    // const addGpuModal_Link = new bootstrap.Modal(document.getElementById('addGpuModal_Link'));
-    // addGpuModal_Link.show();
-
-    // const addGpuOffCanvas_XPaths = new bootstrap.Offcanvas(addGpuOffCanvas_XPaths_el);
-    // addGpuOffCanvas_XPaths.show();
-
-    // const productModal = new bootstrap.Modal(document.getElementById('productModal'));
-    // productModal.show();
   </script>
 
   <script defer src="..\node_modules\@fortawesome\fontawesome-free\js\brands.js"></script>

@@ -325,7 +325,7 @@ function addNewProduct() {
     const inputs = document.getElementById('addGpuOffCanvas_XPathElementSelection').getElementsByTagName('input');
 
     const source = new Source('Unknown', addGpuModal_Link_input.value);
-    source.newPrice(parseFloat((inputs[3].value).clean));
+    source.newPrice(parseFloat((inputs[3].value).clean()));
 
     const product = new Product(undefined, inputs[0].value, inputs[1].value, inputs[2].value);
     product.addSource(source);
@@ -385,3 +385,15 @@ for (let index = 0; index < 100; index++) {
 // const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 // const row = rows[0];
 // const cells = row.getElementsByTagName('td');
+
+// const loginModal = new bootstrap.Modal(document.getElementById('loginModal'), { keyboard: false });
+// loginModal.show();
+
+// const addGpuModal_Link = new bootstrap.Modal(document.getElementById('addGpuModal_Link'));
+// addGpuModal_Link.show();
+
+// const addGpuOffCanvas_XPaths = new bootstrap.Offcanvas(addGpuOffCanvas_XPaths_el);
+// addGpuOffCanvas_XPaths.show();
+
+const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+productModal.show();
