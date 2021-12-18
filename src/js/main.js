@@ -1,8 +1,14 @@
+const { map } = require("jquery");
 
 // Window controls
 function minimizeWindow () { ipcRenderer.invoke('windowAction', 1) }
 function maximizeWindow () { ipcRenderer.invoke('windowAction', 2) }
 function closeWindow () { ipcRenderer.invoke('windowAction', 3) }
+
+// database thingy
+const localdb = new Store();
+// Global data
+let productData = localdb.get('products');
 
 // Add Gpu Stuffs
 const addGpuModal_Link = new bootstrap.Modal(document.getElementById('addGpuModal_Link'));
@@ -22,8 +28,50 @@ const phChart = new Chart("productModalChart", {
 });
 const colors = ['#779ECC', '#9FC0DE', '#F2C894', '#FFB347', '#FF985A'];
 
-// Global data
-let productData = [];
+function waitfordata() {
+    let timeout = null;
+    if (productData[0]) {
+        clearTimeout(timeout);
+        console.log('Got Data', productData)
+        productData = deserializeProducts(productData);
+        setupDataTable();
+    } else {
+        console.log('Waiting for Data', productData);
+        timeout = setTimeout(waitfordata, 1000);
+    }
+}
+
+function deserializeProducts(sProducts) {
+    console.log(sProducts);
+
+    let dsProducts = [];
+
+    for (const product of sProducts) {
+
+        const dsSources = product.sources.map( source => {
+            return new Source(
+                source.title,
+                source.href,
+                source.priceXPath,
+                source.history
+            );
+        });
+
+        const dsProduct = new Product(
+            product.thumbnail,
+            product.title,
+            product.brand,
+            product.chipset,
+            dsSources
+        );
+
+        dsProducts.push(dsProduct);
+    }
+
+    console.log(dsProducts);
+
+    return dsProducts;
+}
 
 // Handle link submission from initial new gpu modal
 function submitLink() {
@@ -35,18 +83,6 @@ function submitLink() {
         addGpuModal_Link_input.classList.add('is-invalid');
     }
 }
-addGpuModal_Link_continue.onclick = submitLink;
-
-// Remove invalid visuals from new gpu modal input when user re-selects it
-addGpuModal_Link_input.addEventListener('focus', (event) => {
-    addGpuModal_Link_input.classList.remove('is-invalid');
-});
-
-// Notify backend to close second browserview when user exits gpu info offcanvas
-addGpuOffCanvas_XPaths_el.addEventListener('hide.bs.offcanvas', (event) => {
-    ipcRenderer.send('closeProductView');
-    addGpuModal_Link_input.value = "";
-});
 
 // Product info selection stuffs
 const productInfoSelectorRadioInputs = document.getElementById('productInfoSelector').getElementsByTagName('input');
@@ -105,10 +141,6 @@ function xpathsViewTransitionManager(event) {
         if (productInfoSelectorInfoThumbnail.attributes.data_complete.value == 'false')
             productInfoSelectorInfoThumbnail.src = 'https://via.placeholder.com/365x365/2aa198?text=+';
     }
-}
-for (const element of productInfoSelectorRadioInputs) {
-    element.onclick = xpathsViewTransitionManager;
-    element.onchange = xpathsViewStyleManager;
 }
 
 // Listen for XPaths
@@ -300,7 +332,7 @@ function setupDataTable() {
         }
     }
 
-    let input = document.getElementById('productsSearch');
+    const input = document.getElementById('productsSearch');
     let timeout = null;
 
     input.addEventListener('keyup', function (e) {
@@ -395,6 +427,7 @@ function addNewProduct() {
     product.addSource(source);
 
     productData.push(product);
+    localdb.set('products', productData);
 
     console.log(product);
 
@@ -402,46 +435,61 @@ function addNewProduct() {
 
     addGpuOffCanvas_XPaths.hide();
 }
+
+// Stuff to setup after everything is loaded
+addGpuModal_Link_continue.onclick = submitLink;
+for (const element of productInfoSelectorRadioInputs) {
+    element.onclick = xpathsViewTransitionManager;
+    element.onchange = xpathsViewStyleManager;
+}
+// Remove invalid visuals from new gpu modal input when user re-selects it
+addGpuModal_Link_input.addEventListener('focus', (event) => {
+    addGpuModal_Link_input.classList.remove('is-invalid');
+});
+// Notify backend to close second browserview when user exits gpu info offcanvas
+addGpuOffCanvas_XPaths_el.addEventListener('hide.bs.offcanvas', (event) => {
+    ipcRenderer.send('closeProductView');
+    addGpuModal_Link_input.value = "";
+});
 document.getElementById('newSourceSubmit').onclick = addNewProduct;
+waitfordata();
 
-setupDataTable();
+// function addProduct(product) {
+//     const productTable = document.getElementById('products');
 
-function addProduct(product) {
-    const productTable = document.getElementById('products');
+//     productData.push(product);
 
-    productData.push(product);
+//     dataToTable(productTable, product, productData.length - 1);
+// }
 
-    dataToTable(productTable, product, productData.length - 1);
-}
+// // Filler data
+// function toFixed(num, fixed) {
+//     var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
+//     return num.toString().match(re)[0];
+// }
 
-// Filler data
-function toFixed(num, fixed) {
-    var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
-    return num.toString().match(re)[0];
-}
+// function rand(min, max, decimal) {
+//     if (!decimal)
+//         return Math.floor((Math.random() * max) + min);
+//     else
+//         return toFixed((Math.random() * max) + min, decimal);
+// }
 
-function rand(min, max, decimal) {
-    if (!decimal)
-        return Math.floor((Math.random() * max) + min);
-    else
-        return toFixed((Math.random() * max) + min, decimal);
-}
+// // filler data to make things look good
+// const title = ['EVGA XC GAMING', 'Asus DUAL EVO OC', 'Asus TUF GAMING OC', 'NVIDIA Founders Edition', 'Asus ROG STRIX WHITE OC', 'MSI VENTUS 2X'];
+// const brand = ['Nvidia', 'Asus', 'EVGA', 'Zotac', 'MSI', 'Gigabyte', 'VisionTek', 'ASRock', 'Sapphire'];
+// const chipset = ['GeForce RTX 3060', 'GeForce GTX 1050 Ti', 'GeForce RTX 3060 Ti', 'GeForce GTX 1650 G5', 'GeForce GTX 1660 SUPER', 'GeForce RTX 3070'];
 
-// filler data to make things look good
-const title = ['EVGA XC GAMING', 'Asus DUAL EVO OC', 'Asus TUF GAMING OC', 'NVIDIA Founders Edition', 'Asus ROG STRIX WHITE OC', 'MSI VENTUS 2X'];
-const brand = ['Nvidia', 'Asus', 'EVGA', 'Zotac', 'MSI', 'Gigabyte', 'VisionTek', 'ASRock', 'Sapphire'];
-const chipset = ['GeForce RTX 3060', 'GeForce GTX 1050 Ti', 'GeForce RTX 3060 Ti', 'GeForce GTX 1650 G5', 'GeForce GTX 1660 SUPER', 'GeForce RTX 3070'];
+// for (let index = 0; index < 100; index++) {
+//     let product = new Product(undefined, title[rand(0, 5)], brand[rand(0, 8)], chipset[rand(0, 5)]);
+//     let source = new Source('Amazon', 'https://www.amazon.com/ZOTAC-GeForce-192-bit-Graphics-ZT-T20600H-10M/dp/B07TDN1SC5/ref=dp_fod_2?pd_rd_i=B07TDN1SC5&th=1');
 
-for (let index = 0; index < 100; index++) {
-    let product = new Product(undefined, title[rand(0, 5)], brand[rand(0, 8)], chipset[rand(0, 5)]);
-    let source = new Source('Amazon', 'https://www.amazon.com/ZOTAC-GeForce-192-bit-Graphics-ZT-T20600H-10M/dp/B07TDN1SC5/ref=dp_fod_2?pd_rd_i=B07TDN1SC5&th=1');
+//     source.newPrice(rand(100, 1000, 2));
+//     source.newPrice(rand(200, 900, 2));
+//     product.addSource(source);
 
-    source.newPrice(rand(100, 1000, 2));
-    source.newPrice(rand(200, 900, 2));
-    product.addSource(source);
-
-    addProduct(product);
-}
+//     addProduct(product);
+// }
 
 // temp open xpaths canvas upon loading for dev purposes
 // ipcRenderer.invoke('loadURL', 'https://www.amazon.com/ZOTAC-GeForce-Graphics-IceStorm-ZT-A30600H-10M/dp/B08W8DGK3X/ref=sr_1_4?keywords=3060&qid=1639014780&sr=8-4');
@@ -459,7 +507,7 @@ for (let index = 0; index < 100; index++) {
 // addGpuModal_Link.show();
 
 // const addGpuOffCanvas_XPaths = new bootstrap.Offcanvas(addGpuOffCanvas_XPaths_el);
-addGpuOffCanvas_XPaths.show();
+// addGpuOffCanvas_XPaths.show();
 
 // const productModal = new bootstrap.Modal(document.getElementById('productModal'));
 // productModal.show();

@@ -3,6 +3,9 @@ const ipcMain = require('electron').ipcMain;
 const windowStateKeeper = require('electron-window-state');
 const path = require('path');
 require('electron-window-manager');
+const Store = require('electron-store');
+
+Store.initRenderer();
 
 // const database = require('./database');
 
