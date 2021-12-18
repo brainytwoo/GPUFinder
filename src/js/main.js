@@ -26,7 +26,7 @@ const phChart = new Chart("productModalChart", {
     type: 'line',
     data: null
 });
-const colors = ['#779ECC', '#9FC0DE', '#F2C894', '#FFB347', '#FF985A'];
+const colors = ['#779ECC', '#FFB347', '#F2C894', '#9FC0DE', '#FF985A'];
 
 function waitfordata() {
     let timeout = null;
@@ -228,8 +228,12 @@ function viewProduct(index) {
                 <li class="list-group-item"><span class="text-muted">Chipset: </span>${product.chipset}</li>
                 <li class="list-group-item"><span class="text-muted">List Price: </span>${dtPrice(product).replace('td', 'span')}</li>`;
 
-    productModalSources.innerHTML = product.sources.map(source => `<li class="list-group-item">${source.title}&ensp;&ensp;<button onclick='shell.openExternal("${source.href}");' class="btn btn-primary btn-sm"><i class="fas fa-shopping-cart"></i></button></li>`);
-
+    productModalSources.innerHTML = product.sources.map(source => `
+                <li class="list-group-item">
+                    <button onclick='shell.openExternal("${source.href}");' class="btn btn-primary btn-sm">
+                        <i class="fas fa-shopping-cart"></i>
+                    </button>
+                &ensp;&ensp;${source.title}</li>`).join('');
 
     let datasets = [];
 
@@ -274,6 +278,7 @@ function viewProduct(index) {
     productModal.show();
 }
 
+// product table stuffs 
 function dtPrice(data) {
     const cPrice = data.lowest();
     const pPrice = data.prevLowest();
@@ -291,7 +296,7 @@ function dtPrice(data) {
 function dataToTable(table, data, index) {
     table.getElementsByTagName('tbody')[0].insertAdjacentHTML('afterbegin', 
     `<tr data-index=${index} onclick="viewProduct(${index})">
-        <th class="text-primary text-end fs-3 py-0 mx-2" scope="row"><img src="${data.thumbnail}" style="max-height: 35px;"></th>
+        <th class="text-primary text-end fs-3 pt-0 pb-2 mx-2" scope="row"><img src="${data.thumbnail}" style="max-height: 35px;"></th>
         <td>${data.title}</td>
         <td>${data.brand}</td>
         <td>${data.chipset}</td>
@@ -322,8 +327,10 @@ async function dataToFilters(table, data, index, container) {
     filterGroupManager(container);
 }
 
-function setupDataTable() {
+async function refreshDataTable() {
     const productTable = document.getElementById('products');
+
+    productTable.getElementsByTagName('tbody')[0].innerHTML = '';
 
     for (const product in productData) {
         if (Object.hasOwnProperty.call(productData, product)) {
@@ -331,6 +338,12 @@ function setupDataTable() {
             dataToTable(productTable, element, product);
         }
     }
+}
+
+function setupDataTable() {
+    const productTable = document.getElementById('products');
+
+    refreshDataTable();
 
     const input = document.getElementById('productsSearch');
     let timeout = null;
@@ -416,22 +429,60 @@ async function filterTable(table, names = '', price = [0, 20000], brands = [], c
     }
 }
 
-function addNewProduct() {
+// add products and sources stuffs
+function addProductOrSource() {
     const productTable = document.getElementById('products');
     const inputs = document.getElementById('addGpuOffCanvas_XPathElementSelection').getElementsByTagName('input');
 
-    const source = new Source(inputs[4].value, addGpuModal_Link_input.value, inputs[3].attributes.data_xpath.value);
-    source.newPrice(parseFloat((inputs[3].value).clean()));
+    const sourceTitle = inputs[4].value;
+    const sourceHref = addGpuModal_Link_input.value;
+    const sourcePriceXpath = inputs[3].attributes.data_xpath.value;
+    const sourcePrice = parseFloat((inputs[3].value).clean());
 
-    const product = new Product(undefined, inputs[0].value, inputs[1].value, inputs[2].value);
+    const productThumbnail = undefined;
+    const productTitle = inputs[0].value;
+    const productBrand = inputs[1].value;
+    const productChipset = inputs[2].value;
+
+    const source = new Source(sourceTitle, sourceHref, sourcePriceXpath);
+    source.newPrice(sourcePrice);
+
+    const product = new Product(productThumbnail, productTitle, productBrand, productChipset);
     product.addSource(source);
-
-    productData.push(product);
-    localdb.set('products', productData);
 
     console.log(product);
 
-    dataToTable(productTable, product, productData.length - 1);
+    console.log('Checking if product already exists...')
+    if (productData.some(el => el.title.toLowerCase() === productTitle.toLowerCase())) {
+        // product exists
+        console.log('Product already exists');
+        // check if source exists for product
+        console.log('Checking if source already exists...');
+        if (productData.some(el => (el.sources.some(source => source.href.toLowerCase() === sourceHref.toLowerCase())))) {
+            // source already exists
+            console.log('Source already exists')
+            // notice that nothing was done
+            console.warn('No new products or sources added');
+        } else {
+            // source does not exist
+            console.log('Source does not exist');
+            // add new source ot the product
+            console.log('Adding new source to product...');
+            productData.find(el => el.title.toLowerCase() === productTitle.toLowerCase()).addSource(source);
+            refreshDataTable();
+            console.log('Added new source to product');
+        }
+    } else {
+        // product does not exist
+        console.log('Product does not exist');
+        // add new product and its source
+        console.log('Adding new product and its source...');
+        productData.push(product);
+        dataToTable(productTable, product, productData.length - 1);
+        console.log('Added new product and its source');
+    }
+
+    localdb.set('products', productData);
 
     addGpuOffCanvas_XPaths.hide();
 }
@@ -451,7 +502,7 @@ addGpuOffCanvas_XPaths_el.addEventListener('hide.bs.offcanvas', (event) => {
     ipcRenderer.send('closeProductView');
     addGpuModal_Link_input.value = "";
 });
-document.getElementById('newSourceSubmit').onclick = addNewProduct;
+document.getElementById('newSourceSubmit').onclick = addProductOrSource;
 waitfordata();
 
 // function addProduct(product) {
