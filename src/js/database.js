@@ -42,11 +42,11 @@ function Product(thumbnail, title, brand, chipset, sources) {
     }
 }
 
-function Source (title, href, history) {
+function Source (title, href, xpath, history) {
     this.title = title;
     this.href = href;
-    this.history = typeof (history) === 'object' ? minLength(history) : [].of(12);
-    this.priceXPath = undefined;
+    this.history = typeof (history) === 'object' ? history : [];
+    this.priceXPath = xpath;
 
     this.newPrice = function (price) {
         this.history.push({ 
@@ -57,12 +57,5 @@ function Source (title, href, history) {
         if (this.history.length > 12) {
             this.history.shift();
         }
-    }
-
-    function minLength(array) {
-        while (array.length < 12) {
-            array.unshift(0);
-        }
-        return array;
     }
 }

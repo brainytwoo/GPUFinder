@@ -150,8 +150,7 @@
       </div>
     </div>
 
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="addGpuOffCanvas_XPaths"
-      aria-labelledby="addGpuOffCanvas_XPathsLabel">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="addGpuOffCanvas_XPaths" aria-labelledby="addGpuOffCanvas_XPathsLabel" style="width: 550px;">
       <div class="offcanvas-header">
         <h5 id="addGpuOffCanvas_XPathsLabel">Select GPU Info</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -163,7 +162,7 @@
           <label class="btn btn-outline-primary" for="productInfoSelector_thumbnail">Thumbnail</label>
           
           <input type="radio" class="btn-check" name="btnradio" id="productInfoSelector_title" data_select="title" autocomplete="off">
-          <label class="btn btn-outline-primary" for="productInfoSelector_title">Title</label>
+          <label class="btn btn-outline-primary" for="productInfoSelector_title">Name</label>
           
           <input type="radio" class="btn-check" name="btnradio" id="productInfoSelector_brand" data_select="brand" autocomplete="off">
           <label class="btn btn-outline-primary" for="productInfoSelector_brand">Brand</label>
@@ -173,10 +172,13 @@
 
           <input type="radio" class="btn-check" name="btnradio" id="productInfoSelector_price" data_select="price" autocomplete="off">
           <label class="btn btn-outline-primary" for="productInfoSelector_price">Price</label>
+
+          <input type="radio" class="btn-check" name="btnradio" id="productInfoSelector_sourceLabel" data_select="label" autocomplete="off">
+          <label class="btn btn-outline-primary" for="productInfoSelector_sourceLabel">Website Name</label>
         </div>
         
         <div class="card" id="addGpuOffCanvas_XPathElementSelection">
-          <img src="https://via.placeholder.com/365x365/2aa198?text=+" id="productInfoSelectorInfoThumbnail" class="card-img-top border border-success border-4" data_complete="false" alt="" style="width: 365px; min-height: 175px;">
+          <img src="https://via.placeholder.com/365x365/2aa198?text=+" id="productInfoSelectorInfoThumbnail" class="card-img-top border border-success border-4" data_complete="false" alt="" style="width: 515px; min-height: 175px;">
           <div class="card-body">
 
             <div class="placeholder-wave col-12 input-group-lg">
@@ -192,6 +194,10 @@
             </div>
 
             <div class="placeholder-wave col-4">
+              <input type="text" class="form-control placeholder" data_xpath="" data_complete="false" disabled>
+            </div>
+
+            <div class="placeholder-wave col-5">
               <input type="text" class="form-control placeholder" data_complete="false" disabled>
             </div>
 

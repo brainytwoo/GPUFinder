@@ -112,9 +112,9 @@ ipcMain.handle('loadURL', (event, source) => {
     mainWindow.setBrowserView(productView);
 
     productView.setBounds({ 
-      x: 75,
+      x: 25,
       y: 75,
-      width: mainWindow.getBounds().width - 150 - 400,
+      width: mainWindow.getBounds().width - 225 - 400,
       height: mainWindow.getBounds().height - 150
     });
 

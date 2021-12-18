@@ -61,7 +61,14 @@ const productInfoEnum = {
     'brand': 1,
     'chipset': 2,
     'price': 3,
-    'thumbnail': 4
+    'label': 4,
+    'thumbnail': 5
+}
+
+function xpathsViewStyleManager(event) {
+    for (const element of productInfoSelectorInfoInputs) {
+        if (element.value.length > 0) element.attributes.data_complete.value = 'true';
+    }
 }
 
 function xpathsViewTransitionManager(event) {
@@ -87,7 +94,7 @@ function xpathsViewTransitionManager(event) {
     // apply selection styles to specific elements
     const targetIndex = productInfoEnum[event.target.attributes.data_select.value];
 
-    if (targetIndex !== 4) {
+    if (targetIndex !== 5) {
         productInfoSelectorInfoInputs[targetIndex].classList.add('bg-success');
         productInfoSelectorInfoInputs[targetIndex].classList.remove('placeholder');
         productInfoSelectorInfoInputs[targetIndex].parentElement.classList.remove('placeholder-wave');
@@ -101,6 +108,7 @@ function xpathsViewTransitionManager(event) {
 }
 for (const element of productInfoSelectorRadioInputs) {
     element.onclick = xpathsViewTransitionManager;
+    element.onchange = xpathsViewStyleManager;
 }
 
 // Listen for XPaths
@@ -110,7 +118,11 @@ ipcRenderer.on('xpath', (event, xpath, inner) => {
 
     const targetIndex = productInfoEnum[selectedProducInfo];
     
-    if ( targetIndex !== 4) {
+    if ( targetIndex === 3 ) {
+        productInfoSelectorInfoInputs[targetIndex].attributes.data_xpath.value = xpath;
+    }
+
+    if ( targetIndex !== 5) {
         productInfoSelectorInfoInputs[targetIndex].attributes.data_complete.value = 'true';
         productInfoSelectorInfoInputs[targetIndex].value = inner.trim();
         productInfoSelectorInfoInputs[targetIndex].classList.add('form-control-transparent');
@@ -193,10 +205,14 @@ function viewProduct(index) {
         const trackDate = new Date();
         const color = colors[product.sources.indexOf(source)];
         let dataset = { label: source.title, backgroundColor: color, borderColor: color, data: [] };
-        for (let element of source.history) {
-            if (!element) element = { timestamp: trackDate, price: 0 }
-            dataset.data.push({ x: element.timestamp, y: element.price });
+        for (let i = 0; i < 12; i++) {
+            const element = source.history[i];
+            if (element)
+                dataset.data.push({ x: element.timestamp, y: element.price });
+            else 
+                dataset.data.unshift({ x: trackDate, y: 0 });
         }
+
         datasets.push(dataset);
         trackDate.setMonth(trackDate.getMonth() - 1)
     }
@@ -372,13 +388,15 @@ function addNewProduct() {
     const productTable = document.getElementById('products');
     const inputs = document.getElementById('addGpuOffCanvas_XPathElementSelection').getElementsByTagName('input');
 
-    const source = new Source('Unknown', addGpuModal_Link_input.value);
+    const source = new Source(inputs[4].value, addGpuModal_Link_input.value, inputs[3].attributes.data_xpath.value);
     source.newPrice(parseFloat((inputs[3].value).clean()));
 
     const product = new Product(undefined, inputs[0].value, inputs[1].value, inputs[2].value);
     product.addSource(source);
 
     productData.push(product);
+
+    console.log(product);
 
     dataToTable(productTable, product, productData.length - 1);
 
@@ -441,7 +459,7 @@ for (let index = 0; index < 100; index++) {
 // addGpuModal_Link.show();
 
 // const addGpuOffCanvas_XPaths = new bootstrap.Offcanvas(addGpuOffCanvas_XPaths_el);
-// addGpuOffCanvas_XPaths.show();
+addGpuOffCanvas_XPaths.show();
 
-const productModal = new bootstrap.Modal(document.getElementById('productModal'));
-productModal.show();
+// const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+// productModal.show();
