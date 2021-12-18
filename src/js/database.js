@@ -45,7 +45,7 @@ function Product(thumbnail, title, brand, chipset, sources) {
 function Source (title, href, history) {
     this.title = title;
     this.href = href;
-    this.history = typeof (history) === 'object' ? history : [];
+    this.history = typeof (history) === 'object' ? minLength(history) : [].of(12);
     this.priceXPath = undefined;
 
     this.newPrice = function (price) {
@@ -53,5 +53,16 @@ function Source (title, href, history) {
             price: price,
             timestamp: Date.now()
         });
+
+        if (this.history.length > 12) {
+            this.history.shift();
+        }
+    }
+
+    function minLength(array) {
+        while (array.length < 12) {
+            array.unshift(0);
+        }
+        return array;
     }
 }

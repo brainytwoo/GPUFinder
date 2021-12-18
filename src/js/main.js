@@ -1,3 +1,4 @@
+
 // Window controls
 function minimizeWindow () { ipcRenderer.invoke('windowAction', 1) }
 function maximizeWindow () { ipcRenderer.invoke('windowAction', 2) }
@@ -13,6 +14,13 @@ const addGpuModal_Link_continue = document.getElementById('addGpuModal_Link_cont
 
 // Price range slider
 const pricefilter = document.getElementById('pricefilter');
+
+// Product price history chart
+const phChart = new Chart("productModalChart", {
+    type: 'line',
+    data: null
+});
+const colors = ['#779ECC', '#9FC0DE', '#F2C894', '#FFB347', '#FF985A'];
 
 // Global data
 let productData = [];
@@ -162,18 +170,58 @@ function viewProduct(index) {
 
     const productModal = new bootstrap.Modal(document.getElementById('productModal'));
     const productModalLabel = document.getElementById('productModalLabel');
-    const productInfo = document.getElementById('productInfo');
+    const productModalThumbnail = document.getElementById('productModalThumbnail');
+    const productModalInfoList = document.getElementById('productModalInfoList');
+    const productModalSources = document.getElementById('productModalSources');
 
     productModalLabel.innerHTML = product.title;
 
-    productInfo.innerHTML =
-        `<tr>
-        <th class="text-primary text-end fs-3 py-0 mx-2" scope="row"><img src="${product.thumbnail}" style="max-height: 35px;"></th>
-        <td>${product.title}</td>
-        <td>${product.brand}</td>
-        <td>${product.chipset}</td>
-        ${dtPrice(product)}
-    </tr>`;
+    productModalThumbnail.src = product.thumbnail;
+
+    productModalInfoList.innerHTML = `
+                <li class="list-group-item"><span class="text-muted">Name: </span>${product.title}</li>
+                <li class="list-group-item"><span class="text-muted">Brand: </span>${product.brand}</li>
+                <li class="list-group-item"><span class="text-muted">Chipset: </span>${product.chipset}</li>
+                <li class="list-group-item"><span class="text-muted">List Price: </span>${dtPrice(product).replace('td', 'span')}</li>`;
+
+    productModalSources.innerHTML = product.sources.map(source => `<li class="list-group-item">${source.title}&ensp;&ensp;<button onclick='shell.openExternal("${source.href}");' class="btn btn-primary btn-sm"><i class="fas fa-shopping-cart"></i></button></li>`);
+
+
+    let datasets = [];
+
+    for (const source of product.sources) {
+        const trackDate = new Date();
+        const color = colors[product.sources.indexOf(source)];
+        let dataset = { label: source.title, backgroundColor: color, borderColor: color, data: [] };
+        for (let element of source.history) {
+            if (!element) element = { timestamp: trackDate, price: 0 }
+            dataset.data.push({ x: element.timestamp, y: element.price });
+        }
+        datasets.push(dataset);
+        trackDate.setMonth(trackDate.getMonth() - 1)
+    }
+
+    console.log(datasets);
+
+    let currentDateTime = new Date();
+    const max = currentDateTime.getTime();
+    const min = currentDateTime.setMonth(currentDateTime.getMonth() - 12);
+
+    const data = {
+        labels: moment.monthsShort(),
+        datasets: datasets,
+        options: {
+            scales: {
+                x: {
+                    min: min,
+                    max: max
+                }
+            }
+        }
+    };
+
+    phChart.data = data;
+    phChart.update();
 
     productModal.show();
 }
