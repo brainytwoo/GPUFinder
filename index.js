@@ -35,6 +35,7 @@ function createWindow(source) {
   // Create the browser window.
   let win = new BrowserWindow({
     icon: 'src/media/icon.ico',
+    title: "GPU Finder",
     show: false,
     frame: false,
     x: windowState.x,

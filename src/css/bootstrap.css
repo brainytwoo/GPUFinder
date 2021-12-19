@@ -5579,7 +5579,7 @@ fieldset:disabled .btn {
 
 .list-group-item-action:active {
   color: #839496;
-  background-color: #eee8d5;
+  background-color: #5a6978;
 }
 
 .list-group-item {
@@ -5610,8 +5610,8 @@ fieldset:disabled .btn {
 
 .list-group-item.active {
   z-index: 2;
-  color: #fff;
-  background-color: #263238;
+  color: #263238;
+  background-color: #FFD185;
   border-color: #263238;
 }
 
@@ -11697,6 +11697,7 @@ fieldset:disabled .btn {
 }
 
 .alert-primary {
+  color: #263238;
   background-color: #FFD185;
 }
 

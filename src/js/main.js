@@ -28,6 +28,15 @@ const phChart = new Chart("productModalChart", {
 });
 const colors = ['#779ECC', '#FFB347', '#F2C894', '#9FC0DE', '#FF985A'];
 
+// show notification
+function notify(type) {
+    if (type === 'example') {
+        new bootstrap.Toast(document.getElementById('alertToast')).show()
+        new Notification('Example Alert', { body: 'This would notify you of prices or such based on the alert that went off' })
+            .onclick = () => document.getElementById("output").innerText = 'Close'
+    }
+}
+
 function waitfordata() {
     let timeout = null;
     if (productData[0]) {
@@ -562,3 +571,6 @@ waitfordata();
 
 // const productModal = new bootstrap.Modal(document.getElementById('productModal'));
 // productModal.show();
+
+// const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+// alertModal.show();
