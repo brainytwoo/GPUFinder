@@ -351,8 +351,6 @@ async function refreshDataTable() {
 }
 
 function setupDataTable() {
-    const productTable = document.getElementById('products');
-
     refreshDataTable();
 
     const input = document.getElementById('productsSearch');
@@ -373,35 +371,37 @@ function setupDataTable() {
 
     for (const element of document.getElementsByName('applyFilters'))
         element.onclick = applyFilters;   
+}
 
-    function applyFilters() {
-        const brandFilterOptions = document.getElementById('brandfilterContainer').getElementsByTagName('input');
-        const chipsetFilterOptions = document.getElementById('chipsetfilterContainer').getElementsByTagName('input');
+function applyFilters() {
+    const productTable = document.getElementById('products');
 
-        const nameFilters = document.getElementById('productsSearch').value;
+    const brandFilterOptions = document.getElementById('brandfilterContainer').getElementsByTagName('input');
+    const chipsetFilterOptions = document.getElementById('chipsetfilterContainer').getElementsByTagName('input');
 
-        const priceFilters = priceRangeSlider.getValue();
+    const nameFilters = document.getElementById('productsSearch').value;
 
-        let brandFilters = []
-        let chipsetFilters = [];
+    const priceFilters = priceRangeSlider.getValue();
 
-        const allBrands = brandFilterOptions[0].checked;
-        const allChipsets = chipsetFilterOptions[0].checked;
+    let brandFilters = []
+    let chipsetFilters = [];
 
-        for (let index = 1; index < brandFilterOptions.length; index++) {
-            const filter = brandFilterOptions[index];
-            if (allBrands || filter.checked)
-                brandFilters.push(filter.attributes['data-filter'].value);
-        }
+    const allBrands = brandFilterOptions[0].checked;
+    const allChipsets = chipsetFilterOptions[0].checked;
 
-        for (let index = 1; index < chipsetFilterOptions.length; index++) {
-            const filter = chipsetFilterOptions[index];
-            if (allChipsets || filter.checked)
-                chipsetFilters.push(filter.attributes['data-filter'].value);
-        }
-
-        filterTable(productTable, nameFilters, priceFilters, brandFilters, chipsetFilters);
+    for (let index = 1; index < brandFilterOptions.length; index++) {
+        const filter = brandFilterOptions[index];
+        if (allBrands || filter.checked)
+            brandFilters.push(filter.attributes['data-filter'].value);
     }
+
+    for (let index = 1; index < chipsetFilterOptions.length; index++) {
+        const filter = chipsetFilterOptions[index];
+        if (allChipsets || filter.checked)
+            chipsetFilters.push(filter.attributes['data-filter'].value);
+    }
+
+    filterTable(productTable, nameFilters, priceFilters, brandFilters, chipsetFilters);
 }
 
 async function filterTable(table, names = '', price = [0, 20000], brands = [], chipsets = []) {
@@ -515,7 +515,13 @@ function newFilterProfile() {
         name: filterNameEl.value
     }
 
-    filterProfiles.push(profile);
+    const filterIndex = filterProfiles.findIndex((el) => { el.name === profile.name });
+
+    if (filterIndex > -1)
+        filterProfiles[filterIndex] = profile;
+    else
+        filterProfiles.push(profile);
+
     localdb.set('filterProfiles', filterProfiles);
 
     filterNameEl.value = '';
@@ -527,9 +533,13 @@ function newFilterProfile() {
 function updateFilters() {
     const filterProfilesDropdown = document.getElementById('filterProfiles');
 
-    const fillerp = filterProfilesDropdown.getElementsByTagName('p');
-    if (fillerp.length > 0) fillerp[0].remove();
-    Array.from(filterProfilesDropdown.getElementsByTagName('li')).forEach( (el) => { el.remove(); });
+    if (filterProfiles.length > 0) {   
+        $(filterProfilesDropdown.getElementsByTagName('p')).hide();
+    } else {
+        $(filterProfilesDropdown.getElementsByTagName('p')).show();
+    }
+
+    Array.from(filterProfilesDropdown.getElementsByTagName('li')).forEach((el) => { el.remove(); });
 
     filterProfiles.forEach((profile) => {
         filterProfilesDropdown.insertAdjacentHTML('afterbegin', `<li class="position-relative"><button class="dropdown-item" onclick="applyFilterProfile('${profile.name}');">${profile.name}</button><button onclick="removeFilterProfile('${profile.name}');" class="btn btn-link text-warning position-absolute top-50 end-0 translate-middle-y"><i class="fas fa-trash"></i></button></li>`);
@@ -563,6 +573,8 @@ function applyFilterProfile(name) {
          chipsetFilters.forEach((el) => {
              el.checked = (filters.chipset.includes(el.getAttribute('data-filter'))) ? true : false;
          });
+
+         applyFilters();
      }
  }
 
