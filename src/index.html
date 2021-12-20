@@ -257,6 +257,28 @@
       </div>
     </div>
 
+    <!-- Filter Profile Name -->
+    <div class="modal fade" id="filterProfileNameModal" aria-hidden="true" aria-labelledby="filterProfileNameModalLabel" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content needs-validation">
+          <div class="modal-header">
+            <h5 class="modal-title" id="filterProfileNameModalLabel">Filter Profile Name</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input id="filterProfileNameInput" type="text" data-lpignore="true" class="form-control"
+              placeholder="Name your profile..." required>
+            <div class="invalid-feedback">
+              Please provide a name for the new profile.
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" data-bs-dismiss="modal" id="filterProfileNameModal_submit">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Topbar -->
     <div class="bg-dark w-100 position-relative draggable" style="height: 35px;">
       <div class="bg-dark position-relative" style="width: 230px; height: 99px; border-bottom-right-radius: 56px; ">
@@ -292,10 +314,12 @@
             data-bs-toggle="dropdown" aria-expanded="false" data-bs-offset="0,5">
             Filter Profile
           </button>
-          <ul class="dropdown-menu dropdown-menu-dark w-100" aria-labelledby="filterProfileDropdown">
-            <li><a class="dropdown-item" href="#">2060 - Example</a></li>
-            <li><a class="dropdown-item" href="#">3060 - Example</a></li>
-            <button class="btn shadow rounded-circle btn-primary position-absolute top-100 start-100 translate-middle"><i
+          <ul id="filterProfiles" class="dropdown-menu dropdown-menu-dark w-100" aria-labelledby="filterProfileDropdown">
+            <p class="p-2">
+              No filter profiles are set.<br>
+              Try setting one by setting and applying the filters you would like for the profile then hitting the <strong>Add Filter</strong> icon in the bottom right.
+            </p>
+            <button class="btn shadow rounded-circle btn-primary position-absolute top-100 start-100 translate-middle" data-bs-target="#filterProfileNameModal" data-bs-toggle="modal"><i
                 class="fas fa-plus"></i></button>
           </ul>
         </div>

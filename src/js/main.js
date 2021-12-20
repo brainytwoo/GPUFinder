@@ -9,6 +9,7 @@ function closeWindow () { ipcRenderer.invoke('windowAction', 3) }
 const localdb = new Store();
 // Global data
 let productData = localdb.get('products');
+let filterProfiles = [];
 
 // Add Gpu Stuffs
 const addGpuModal_Link = new bootstrap.Modal(document.getElementById('addGpuModal_Link'));
@@ -496,12 +497,82 @@ function addProductOrSource() {
     addGpuOffCanvas_XPaths.hide();
 }
 
+// Add new filter profile
+function newFilterProfile() {
+    const searchFilter = document.getElementById('productsSearch').value;
+    const priceFilter = priceRangeSlider.getValue();
+    const brandFilters = Array.from(document.getElementById('brandfilterContainer').querySelectorAll(':checked')).map(el => el.getAttribute('data-filter'));
+    const chipsetFilters = Array.from(document.getElementById('chipsetfilterContainer').querySelectorAll(':checked')).map(el => el.getAttribute('data-filter'));
+    const filterNameEl = document.getElementById('filterProfileNameInput');
+
+    console.log(brandFilters);
+
+    const profile = {
+        search: searchFilter,
+        price: priceFilter,
+        brand: brandFilters,
+        chipset: chipsetFilters,
+        name: filterNameEl.value
+    }
+
+    filterProfiles.push(profile);
+    localdb.set('filterProfiles', filterProfiles);
+
+    filterNameEl.value = '';
+
+    updateFilters();
+ }
+
+ // Update filter list
+function updateFilters() {
+    const filterProfilesDropdown = document.getElementById('filterProfiles');
+
+    const fillerp = filterProfilesDropdown.getElementsByTagName('p');
+    if (fillerp.length > 0) fillerp[0].remove();
+    Array.from(filterProfilesDropdown.getElementsByTagName('li')).forEach( (el) => { el.remove(); });
+
+    filterProfiles.forEach((profile) => {
+        filterProfilesDropdown.insertAdjacentHTML('afterbegin', `<li class="position-relative"><button class="dropdown-item" onclick="applyFilterProfile('${profile.name}');">${profile.name}</button><button onclick="removeFilterProfile('${profile.name}');" class="btn btn-link text-warning position-absolute top-50 end-0 translate-middle-y"><i class="fas fa-trash"></i></button></li>`);
+    });
+}
+
+// Remove filter profile
+function removeFilterProfile(name) {
+    const index = filterProfiles.findIndex(el => el.name === name);
+    if (index > -1)
+        filterProfiles.splice(index, 1);
+    localdb.set('filterProfiles', filterProfiles);
+    updateFilters();
+}
+
+ // Apply selected filter profile
+function applyFilterProfile(name) {
+     const filters = filterProfiles.find(el => el.name === name);
+
+     if (filters) {
+         const searchFilter = document.getElementById('productsSearch');
+         const brandFilters = Array.from(document.getElementById('brandfilterContainer').getElementsByTagName('input'));
+         const chipsetFilters = Array.from(document.getElementById('chipsetfilterContainer').getElementsByTagName('input'));
+
+         searchFilter.value = filters.search;
+         priceRangeSlider.setValue(filters.price[0], 0);
+         priceRangeSlider.setValue(filters.price[1], 1);
+         brandFilters.forEach((el) => {
+             el.checked = (filters.brand.includes(el.getAttribute('data-filter'))) ? true : false;
+         });
+         chipsetFilters.forEach((el) => {
+             el.checked = (filters.chipset.includes(el.getAttribute('data-filter'))) ? true : false;
+         });
+     }
+ }
+
 // Stuff to setup after everything is loaded
 addGpuModal_Link_continue.onclick = submitLink;
 for (const element of productInfoSelectorRadioInputs) {
     element.onclick = xpathsViewTransitionManager;
     element.onchange = xpathsViewStyleManager;
 }
+document.getElementById('filterProfileNameModal_submit').onclick = newFilterProfile;
 // Remove invalid visuals from new gpu modal input when user re-selects it
 addGpuModal_Link_input.addEventListener('focus', (event) => {
     addGpuModal_Link_input.classList.remove('is-invalid');
@@ -513,6 +584,12 @@ addGpuOffCanvas_XPaths_el.addEventListener('hide.bs.offcanvas', (event) => {
 });
 document.getElementById('newSourceSubmit').onclick = addProductOrSource;
 waitfordata();
+
+if (localdb.has('filterProfiles')) {
+    filterProfiles = localdb.get('filterProfiles');
+    updateFilters();
+}
+
 
 // function addProduct(product) {
 //     const productTable = document.getElementById('products');
